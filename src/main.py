@@ -58,7 +58,7 @@ n_actions=3
 
 model = A3CFFSoftmax(ndim_obs=obs_size, n_actions=n_actions)
 #opt = rmsprop_async.RMSpropAsync(lr=7e-4, eps=0.01, alpha=0.98)
-opt=chainer.optimizers.Adam(eps=1e-2)
+opt=chainer.optimizers.Adam(eps=1e-3)
 opt.setup(model)
 
 # Set the discount factor that discounts future rewards.
@@ -141,7 +141,7 @@ for i in range(0,3):
                 else:
                     #print("PASS")
                     money, ethereum, total_money = pass_simple(Qmax,money, ethereum, total_money, current_price)
-                    pass_reward=0.00#0.01　is default
+                    pass_reward=0.00#0.01 is default
                     pass_count+=1
 
                 reward = total_money - before_money+pass_reward
