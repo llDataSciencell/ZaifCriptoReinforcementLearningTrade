@@ -101,7 +101,7 @@ def env_execute(action,current_price,next_price,cripto_amount,usdt_amount):
 
     return reward
 
-buy_sell_fee = 0.0000
+buy_sell_fee = 0.0005
 def buy_simple(pred,money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
         spend = money * 0.8
@@ -172,11 +172,11 @@ for i in range(0,3):
 
                 reward = total_money - before_money+pass_reward
                 if buy_sequential_count_flag >= 3:
-                    #print("buyが"+str(buy_sequential_count_flag)+"回以上")
-                    reward -= (1+float(buy_sequential_count_flag)*0.1) ** 2
+                    print("buyが"+str(buy_sequential_count_flag)+"回以上")
+                    reward -= (1+float(buy_sequential_count_flag)*0.1) ** 3
                 elif sell_sequential_count_flag >= 3:
-                    #print("sellが"+str(sell_sequential_count_flag)+"回以上")
-                    reward -= (1+float(sell_sequential_count_flag)*0.1) ** 2
+                    print("sellが"+str(sell_sequential_count_flag)+"回以上")
+                    reward -= (1+float(sell_sequential_count_flag)*0.1) ** 3
                 before_money = total_money
 
                 if idx % 100 == 1:
