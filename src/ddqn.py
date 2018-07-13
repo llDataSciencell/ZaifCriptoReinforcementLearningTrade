@@ -38,15 +38,16 @@ def getDataPoloniex():
 '''
 
 #time_date, price_data = getDataPoloniex()
-obs_size = 200#shape#env.observation_space.shape[0]
+obs_size = 203#shape#env.observation_space.shape[0]
+input_len=200
 n_actions=3
 
 training_set=copy.copy(price_data)
 X_train = []
 y_train = []
-for i in range(obs_size, len(training_set)-1001):
+for i in range(input_len, len(training_set)-1001):
     #X_train.append(np.flipud(training_set_scaled[i-60:i]))
-    X_train.append(training_set[i - obs_size:i])
+    X_train.append(training_set[i - input_len:i])
     y_train.append(training_set[i])
 
 
@@ -145,24 +146,22 @@ for i in range(0,3):
     total_money = money + np.float64(price[0] * ethereum)
     first_total_money = total_money
     pass_count=0
-    buy_sequential_count_flag=0
-    sell_sequential_count_flag=0
+    buy_sell_count=0#buy+ sell -
     for idx in range(0, len(price)):
                 current_price = X_train[idx][-1]
-                action = agent.act_and_train(np.array(X_train[idx],dtype='f'), reward)#idx+1が重要。
+                buy_sell_num_flag=[1.0,0.0,buy_sell_count] if buy_sell_count >= 1 else [0.0,1.0,buy_sell_count]
+                action = agent.act_and_train(np.array(X_train[idx]+buy_sell_num_flag,dtype='f'), reward)#idx+1が重要。
                 #Qmax=agent.evaluate_actions(action)
 
                 Qmax=1
                 pass_reward=0
                 if action == 0:
                     print("buy")
-                    buy_sequential_count_flag+=1
-                    sell_sequential_count_flag-=1
+                    buy_sell_count+=1
                     money, ethereum, total_money = buy_simple(Qmax,money, ethereum, total_money, current_price)
                 elif action == 1:
                     print("sell")
-                    sell_sequential_count_flag+=1
-                    buy_sequential_count_flag-=1
+                    buy_sell_count-=1
                     money, ethereum, total_money = sell_simple(Qmax,money, ethereum, total_money, current_price)
                 else:
                     print("PASS")
@@ -171,18 +170,18 @@ for i in range(0,3):
                     pass_count+=1
 
                 reward = total_money - before_money+pass_reward
-                if buy_sequential_count_flag >= 3:
-                    print("buyが"+str(buy_sequential_count_flag)+"回以上")
-                    reward -= (1+float(buy_sequential_count_flag)*0.1) ** 3
-                elif sell_sequential_count_flag >= 3:
-                    print("sellが"+str(sell_sequential_count_flag)+"回以上")
-                    reward -= (1+float(sell_sequential_count_flag)*0.1) ** 3
+                if abs(buy_sell_count) >= 5:
+                    print("buy_sell"+str(buy_sell_count)+"回")
+                    reward -= (float(buy_sell_count)) ** 4
+
                 before_money = total_money
 
                 if idx % 100 == 1:
                     print("action:" + str(action))
                     print("FINAL" + str(total_money))
                     print("100回中passは"+str(pass_count)+"回")
+                    #print("100回中buy_sell_countは" + str(buy_sell_count) + "回")
+
                     pass_count=0
     #agent.stop_episode_and_train(X_train[-1], reward, True)
 
