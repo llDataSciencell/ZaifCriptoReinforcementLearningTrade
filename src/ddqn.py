@@ -172,7 +172,7 @@ for i in range(0,3):
                 reward = total_money - before_money+pass_reward
                 if abs(buy_sell_count) >= 5:
                     print("buy_sell"+str(buy_sell_count)+"回")
-                    reward -= (float(buy_sell_count)) ** 4
+                    reward -= (float(abs(buy_sell_count))) ** 6
 
                 before_money = total_money
 
