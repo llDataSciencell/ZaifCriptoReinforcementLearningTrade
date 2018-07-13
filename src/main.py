@@ -36,7 +36,7 @@ def getDataPoloniex():
 '''
 
 #time_date, price_data = getDataPoloniex()
-obs_size = 60#shape#env.observation_space.shape[0]
+obs_size = 200#shape#env.observation_space.shape[0]
 n_actions=3
 
 training_set=copy.copy(price_data)
