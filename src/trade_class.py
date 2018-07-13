@@ -35,7 +35,7 @@ class TradeClass(object):
             header = next(reader)  # ヘッダーを読み飛ばしたい時
             for row in reader:
                 history_data.append(float(row[1]))
-                print(float(row[1]))
+                #print(float(row[1]))
             return history_data
 
     def getDataPoloniex(self):

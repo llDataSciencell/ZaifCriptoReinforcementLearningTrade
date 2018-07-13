@@ -2,8 +2,10 @@
 import chainer
 #import chainer.functions as F
 #import chainer.links as L
-#import chainerrl
+import chainerrl
 from chainerrl.agents import a3c
+import chainer.links as L
+import chainer.functions as F
 #from chainerrl.action_value import DiscreteActionValue
 #from chainerrl.action_value import QuadraticActionValue
 #from chainerrl.optimizers import rmsprop_async
@@ -48,41 +50,52 @@ for i in range(obs_size, len(training_set)-1001):
     y_train.append(training_set[i])
 
 
-class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
-    """An example of A3C feedforward softmax policy."""
+class QFunction(chainer.Chain):
+    def __init__(self, obs_size, n_actions, n_hidden_channels=500):
+        super(QFunction, self).__init__(
+            l0=L.Linear(obs_size, n_hidden_channels),
+            l1=L.Linear(n_hidden_channels, n_hidden_channels),
+            l2=L.Linear(n_hidden_channels, n_actions))
 
-    def __init__(self, ndim_obs, n_actions, hidden_sizes=(60,100)):
-        self.pi = policies.SoftmaxPolicy(
-            model=links.MLP(ndim_obs, n_actions, hidden_sizes))
-        self.v = links.MLP(ndim_obs, 1, hidden_sizes=hidden_sizes)
-        super().__init__(self.pi, self.v)
+    def __call__(self, x, test=False):
+        """
+        Args:
+            x (ndarray or chainer.Variable): An observation
+            test (bool): a flag indicating whether it is in test mode
+        """
+        h = F.tanh(self.l0(x))
+        h = F.tanh(self.l1(h))
+        return chainerrl.action_value.DiscreteActionValue(self.l2(h))
 
-    def pi_and_v(self, state):
-        return self.pi(state), self.v(state)
 
 
-
-model = A3CFFSoftmax(ndim_obs=obs_size, n_actions=n_actions)
+model = QFunction(obs_size=obs_size, n_actions=n_actions)
 #opt = rmsprop_async.RMSpropAsync(lr=7e-4, eps=0.01, alpha=0.98)
 opt=chainer.optimizers.Adam(eps=1e-4)
 opt.setup(model)
 
 # Set the discount factor that discounts future rewards.
+gamma = 0.95
 
 class RandomActor:
     def __init__(self):
         pass
     def random_action_func(self):
+        # 所持金を最大値にしたランダムを返すだけ
         return random.randint(0,2)
 
 ra = RandomActor()
 
-def phi(obs):
-    return obs.astype(np.float32)
+# Use epsilon-greedy for exploration
+explorer = chainerrl.explorers.ConstantEpsilonGreedy(epsilon=0.3, random_action_func=ra.random_action_func)
 
-agent = a3c.A3C(model, opt, t_max=5, gamma=0.95, beta=1e-2, phi=phi)
+replay_buffer = chainerrl.replay_buffer.ReplayBuffer(capacity=10 ** 6)
 
-#action_value=chainerrl.action_value.ActionValue()
+
+agent = chainerrl.agents.DoubleDQN(
+    model, opt, replay_buffer, gamma, explorer,
+    replay_start_size=500, update_interval=1,
+    target_update_interval=100)
 
 def env_execute(action,current_price,next_price,cripto_amount,usdt_amount):
 
@@ -159,11 +172,11 @@ for i in range(0,3):
 
                 reward = total_money - before_money+pass_reward
                 if buy_sequential_count_flag >= 3:
-                    print("buyが"+str(buy_sequential_count_flag)+"回以上")
-                    reward -= float(buy_sequential_count_flag) ** 2
+                    #print("buyが"+str(buy_sequential_count_flag)+"回以上")
+                    reward -= (1+float(buy_sequential_count_flag)*0.1) ** 2
                 elif sell_sequential_count_flag >= 3:
-                    print("sellが"+str(sell_sequential_count_flag)+"回以上")
-                    reward -= float(sell_sequential_count_flag) ** 2
+                    #print("sellが"+str(sell_sequential_count_flag)+"回以上")
+                    reward -= (1+float(sell_sequential_count_flag)*0.1) ** 2
                 before_money = total_money
 
                 if idx % 100 == 1:
