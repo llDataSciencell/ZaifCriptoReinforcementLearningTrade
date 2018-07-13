@@ -88,12 +88,14 @@ def env_execute(action,current_price,next_price,cripto_amount,usdt_amount):
 
     return reward
 
+buy_sell_fee = 0.0005
 def buy_simple(pred,money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
         spend = money * 0.8
-        money -= spend *1.0005
+        money -= spend *(1+buy_sell_fee)
         if money < 0.0:
-            return first_money,first_ethereum,first_total_money
+            #同じactionを選択させ続けないようにするための罰則
+            return first_money,first_ethereum,first_total_money*(1-buy_sell_fee)
 
         ethereum += float(spend / current_price)
         total_money = money + ethereum * current_price
@@ -103,9 +105,10 @@ def buy_simple(pred,money, ethereum, total_money, current_price):
 def sell_simple(pred,money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
         spend = ethereum * 0.8
-        ethereum -= spend * 1.0005
+        ethereum -= spend * (1+buy_sell_fee)
         if ethereum < 0.0:
-            return first_money,first_ethereum,first_total_money
+            # 同じactionを選択させ続けないようにするための罰則
+            return first_money,first_ethereum,first_total_money*(1-buy_sell_fee)
 
         money += float(spend * current_price)
         total_money = money + float(ethereum * current_price)
