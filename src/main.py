@@ -36,15 +36,16 @@ def getDataPoloniex():
 '''
 
 #time_date, price_data = getDataPoloniex()
-obs_size = 200#shape#env.observation_space.shape[0]
+price_len = 200#shape#env.observation_space.shape[0]
 n_actions=3
+input_len=203
 
 training_set=copy.copy(price_data)
 X_train = []
 y_train = []
-for i in range(obs_size, len(training_set)-1001):
+for i in range(price_len, len(training_set)-1001):
     #X_train.append(np.flipud(training_set_scaled[i-60:i]))
-    X_train.append(training_set[i - obs_size:i])
+    X_train.append(training_set[i - price_len:i])
     y_train.append(training_set[i])
 
 
@@ -62,9 +63,10 @@ class A3CFFSoftmax(chainer.ChainList, a3c.A3CModel):
 
 
 
-model = A3CFFSoftmax(ndim_obs=obs_size, n_actions=n_actions)
-#opt = rmsprop_async.RMSpropAsync(lr=7e-4, eps=0.01, alpha=0.98)
-opt=chainer.optimizers.Adam(eps=1e-4)
+model = A3CFFSoftmax(ndim_obs=input_len, n_actions=n_actions)
+#opt = chainer.optimizers.rmsprop_async.RMSpropAsync(lr=7e-4, eps=0.01, alpha=0.98)
+#opt=chainer.optimizers.Adam(eps=1e-4)
+opt=chainer.optimizers.RMSprop(lr=7e-4, eps=0.01, alpha=0.98)
 opt.setup(model)
 
 # Set the discount factor that discounts future rewards.
@@ -80,7 +82,7 @@ ra = RandomActor()
 def phi(obs):
     return obs.astype(np.float32)
 
-agent = a3c.A3C(model, opt, t_max=5, gamma=0.95, beta=1e-2, phi=phi)
+agent = a3c.A3C(model, opt, t_max=5, gamma=0.95)
 
 #action_value=chainerrl.action_value.ActionValue()
 
@@ -88,7 +90,7 @@ def env_execute(action,current_price,next_price,cripto_amount,usdt_amount):
 
     return reward
 
-buy_sell_fee = 0.0000
+buy_sell_fee = 0.0001
 def buy_simple(pred,money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
         spend = money * 0.8
@@ -120,8 +122,11 @@ try:
 except:
     print("Agent load failed")
 
+
+
 #トレーニング
 #放っておいてtotal_priceが上がることもある。今のプログラムだと放っておいても値段変わらない
+
 for i in range(0,3):
     reward=0
 
@@ -132,51 +137,56 @@ for i in range(0,3):
     total_money = money + np.float64(price[0] * ethereum)
     first_total_money = total_money
     pass_count=0
-    buy_sequential_count_flag=0
-    sell_sequential_count_flag=0
+    buy_sell_count=0#buy+ sell -
+    pass_renzoku_count=0
     for idx in range(0, len(price)):
                 current_price = X_train[idx][-1]
-                action = agent.act_and_train(np.array(X_train[idx],dtype='f'), reward)#idx+1が重要。
+                buy_sell_num_flag=[1.0,0.0,buy_sell_count] if buy_sell_count >= 1 else [0.0,1.0,buy_sell_count]
+                action = agent.act_and_train(np.array(X_train[idx]+buy_sell_num_flag,dtype='f'), reward)#idx+1が重要。
+                print(agent.get_statistics())
                 #Qmax=agent.evaluate_actions(action)
 
                 Qmax=1
                 pass_reward=0
                 if action == 0:
                     print("buy")
-                    buy_sequential_count_flag+=1
-                    sell_sequential_count_flag-=1
+                    buy_sell_count+=1
                     money, ethereum, total_money = buy_simple(Qmax,money, ethereum, total_money, current_price)
                 elif action == 1:
                     print("sell")
-                    sell_sequential_count_flag+=1
-                    buy_sequential_count_flag-=1
+                    buy_sell_count-=1
                     money, ethereum, total_money = sell_simple(Qmax,money, ethereum, total_money, current_price)
                 else:
                     print("PASS")
                     money, ethereum, total_money = pass_simple(Qmax,money, ethereum, total_money, current_price)
-                    pass_reward=0.00#0.01 is default
+                    pass_reward=0.0#-10#0.01 is default
                     pass_count+=1
 
                 reward = total_money - before_money+pass_reward
-                if buy_sequential_count_flag >= 3:
-                    print("buyが"+str(buy_sequential_count_flag)+"回以上")
-                    reward -= float(buy_sequential_count_flag) ** 2
-                elif sell_sequential_count_flag >= 3:
-                    print("sellが"+str(sell_sequential_count_flag)+"回以上")
-                    reward -= float(sell_sequential_count_flag) ** 2
+                if reward > 0:
+                    reward = reward * 1.2
+                if buy_sell_count >= 5 and action == 0:
+                    print("buy_sell"+str(buy_sell_count)+"回　action==" + str(action))
+                    reward -= (float(abs(buy_sell_count)*10))
+                    print(reward)
+                elif buy_sell_count <= -5 and action == 1:
+                    print("buy_sell" + str(buy_sell_count) + "回　action==" + str(action))
+                    reward -= (float(abs(buy_sell_count) * 10))
+                    print(reward)
+
                 before_money = total_money
 
                 if idx % 100 == 1:
                     print("action:" + str(action))
                     print("FINAL" + str(total_money))
                     print("100回中passは"+str(pass_count)+"回")
+                    print("100回中buy_sell_countは" + str(buy_sell_count) + "回")
                     pass_count=0
     #agent.stop_episode_and_train(X_train[-1], reward, True)
 
     # Save an agent to the 'agent' directory
     agent.save('chainerRLAgent')
     print("START MONEY" + str(first_total_money))
-
 #テスト
 for i in range(0,1):
     reward=0

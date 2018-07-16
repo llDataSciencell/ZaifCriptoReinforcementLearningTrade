@@ -147,9 +147,10 @@ for i in range(0,3):
     first_total_money = total_money
     pass_count=0
     buy_sell_count=0#buy+ sell -
+    pass_renzoku_count=0
     for idx in range(0, len(price)):
                 current_price = X_train[idx][-1]
-                buy_sell_num_flag=[1.0,0.0,abs(buy_sell_count)] if buy_sell_count >= 1 else [0.0,1.0,abs(buy_sell_count)]
+                buy_sell_num_flag=[1.0,0.0,buy_sell_count] if buy_sell_count >= 1 else [0.0,1.0,buy_sell_count]
                 action = agent.act_and_train(np.array(X_train[idx]+buy_sell_num_flag,dtype='f'), reward)#idx+1が重要。
                 #Qmax=agent.evaluate_actions(action)
 
@@ -158,21 +159,28 @@ for i in range(0,3):
                 if action == 0:
                     print("buy")
                     buy_sell_count+=1
+                    pass_renzoku_count=0
                     money, ethereum, total_money = buy_simple(Qmax,money, ethereum, total_money, current_price)
                 elif action == 1:
                     print("sell")
                     buy_sell_count-=1
+                    pass_renzoku_count=0
                     money, ethereum, total_money = sell_simple(Qmax,money, ethereum, total_money, current_price)
                 else:
                     print("PASS")
                     money, ethereum, total_money = pass_simple(Qmax,money, ethereum, total_money, current_price)
-                    pass_reward=0.00#0.01 is default
+                    pass_reward=0.0#-0.001)#0.01 is default
                     pass_count+=1
 
                 reward = total_money - before_money+pass_reward
-                if abs(buy_sell_count) >= 5:
-                    print("buy_sell"+str(buy_sell_count)+"回")
-                    reward -= (float(abs(buy_sell_count))) ** 6
+                if buy_sell_count >= 5 and action == 0:
+                    print("buy_sell"+str(buy_sell_count)+"回　action==" + str(action))
+                    reward -= (float(abs(buy_sell_count)*10))
+                    print(reward)
+                elif buy_sell_count <= -5 and action == 1:
+                    print("buy_sell" + str(buy_sell_count) + "回　action==" + str(action))
+                    reward -= (float(abs(buy_sell_count) * 10))
+                    print(reward)
 
                 before_money = total_money
 
