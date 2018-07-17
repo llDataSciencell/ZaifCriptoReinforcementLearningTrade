@@ -14,12 +14,17 @@ import datetime
 import time
 import json
 import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 class TradeClass(object):
 
 
     def __init__(self):
+        self.trade_history=[]
+        self.price_history=[]
 
-        pass
 
     def read_cripto_watch_json(self):
         f = open('../DATA/Min-2017-6-1.json', 'r')
@@ -142,3 +147,27 @@ class TradeClass(object):
         print("FIRST"+str(first_total_money))
         print("FINAL" + str(total_money))
         return total_money
+
+    def update_trading_view(self, current_price, action):
+        self.price_history.append(current_price)
+        self.trade_history.append(action)
+
+
+    def draw_trading_view(self):
+        data, date = np.array(self.price_history), np.array([idx for idx in range(0, len(self.price_history))])
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(date, data)#,marker='o'
+        ax.plot()
+
+        for num in range(0,len(self.price_history)):
+            if self.trade_history[num] == 0:
+                plt.scatter(date[num], data[num], marker="^", color="green")
+            elif self.trade_history[num] == 1:
+                plt.scatter(date[num],data[num], marker="v", color="red")
+
+        ax.set_title("Cripto Price")
+        ax.set_xlabel("Day")
+        ax.set_ylabel("Price[$]")
+        plt.grid(fig)
+        plt.show(fig)
