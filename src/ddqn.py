@@ -56,9 +56,9 @@ for i in range(input_len, len(training_set)-1001):
 class QFunction(chainer.Chain):
     def __init__(self, obs_size, n_actions, n_hidden_channels=500):
         super(QFunction, self).__init__(
-            l0=(obs_size, n_hidden_channels),
-            l1=F.ReLU(n_hidden_channels, n_hidden_channels),
-            l2=F.ReLu(n_hidden_channels, n_actions))
+            l0=L.Linear(obs_size, n_hidden_channels),
+            l1=L.Linear(n_hidden_channels, n_hidden_channels),
+            l2=L.Linear(n_hidden_channels, n_actions))
 
     def __call__(self, x, test=False):
         """
@@ -104,10 +104,10 @@ def env_execute(action,current_price,next_price,cripto_amount,usdt_amount):
 
     return reward
 
-buy_sell_fee = 0.0005
+buy_sell_fee = 0.0000
 def buy_simple(money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
-        spend = money * 0.8
+        spend = money * 0.1
         money -= spend * (1+buy_sell_fee)
         if money <= 0.0:
             return first_money,first_ethereum,first_total_money
@@ -119,7 +119,7 @@ def buy_simple(money, ethereum, total_money, current_price):
 
 def sell_simple(money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
-        spend = ethereum * 0.8
+        spend = ethereum * 0.1
         ethereum -= spend * (1+buy_sell_fee)
         if ethereum <= 0.0:
             return first_money,first_ethereum,first_total_money
