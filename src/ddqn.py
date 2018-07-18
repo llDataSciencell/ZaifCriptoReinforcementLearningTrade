@@ -6,6 +6,7 @@ import chainerrl
 from chainerrl.agents import a3c
 import chainer.links as L
 import chainer.functions as F
+
 #from chainerrl.action_value import DiscreteActionValue
 #from chainerrl.action_value import QuadraticActionValue
 #from chainerrl.optimizers import rmsprop_async
@@ -38,9 +39,10 @@ def getDataPoloniex():
 '''
 
 #time_date, price_data = getDataPoloniex()
-obs_size = 203#shape#env.observation_space.shape[0]
-input_len=200
+
+input_len=400
 n_actions=3
+obs_size = input_len+n_actions#shape#env.observation_space.shape[0]
 
 training_set=copy.copy(price_data)
 X_train = []
@@ -54,9 +56,9 @@ for i in range(input_len, len(training_set)-1001):
 class QFunction(chainer.Chain):
     def __init__(self, obs_size, n_actions, n_hidden_channels=500):
         super(QFunction, self).__init__(
-            l0=L.Linear(obs_size, n_hidden_channels),
-            l1=L.Linear(n_hidden_channels, n_hidden_channels),
-            l2=L.Linear(n_hidden_channels, n_actions))
+            l0=(obs_size, n_hidden_channels),
+            l1=F.ReLU(n_hidden_channels, n_hidden_channels),
+            l2=F.ReLu(n_hidden_channels, n_actions))
 
     def __call__(self, x, test=False):
         """
@@ -103,7 +105,7 @@ def env_execute(action,current_price,next_price,cripto_amount,usdt_amount):
     return reward
 
 buy_sell_fee = 0.0005
-def buy_simple(pred,money, ethereum, total_money, current_price):
+def buy_simple(money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
         spend = money * 0.8
         money -= spend * (1+buy_sell_fee)
@@ -115,7 +117,7 @@ def buy_simple(pred,money, ethereum, total_money, current_price):
 
         return money, ethereum, total_money
 
-def sell_simple(pred,money, ethereum, total_money, current_price):
+def sell_simple(money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
         spend = ethereum * 0.8
         ethereum -= spend * (1+buy_sell_fee)
@@ -126,7 +128,7 @@ def sell_simple(pred,money, ethereum, total_money, current_price):
         total_money = money + float(ethereum * current_price)
 
         return money, ethereum, total_money
-def pass_simple(pred,money,ethereum,total_money,current_price):
+def pass_simple(money,ethereum,total_money,current_price):
     total_money = money + float(ethereum * current_price)
     return money,ethereum,total_money
 try:
@@ -152,48 +154,50 @@ for i in range(0,3):
                 current_price = X_train[idx][-1]
                 buy_sell_num_flag=[1.0,0.0,buy_sell_count] if buy_sell_count >= 1 else [0.0,1.0,buy_sell_count]
                 action = agent.act_and_train(np.array(X_train[idx]+buy_sell_num_flag,dtype='f'), reward)#idx+1が重要。
-                #Qmax=agent.evaluate_actions(action)
+                print(agent.get_statistics())
+
                 trade.update_trading_view(current_price, action)
 
-                Qmax=1
                 pass_reward=0
                 if action == 0:
                     print("buy")
                     buy_sell_count+=1
                     pass_renzoku_count=0
-                    money, ethereum, total_money = buy_simple(Qmax,money, ethereum, total_money, current_price)
+                    money, ethereum, total_money = buy_simple(money, ethereum, total_money, current_price)
                 elif action == 1:
                     print("sell")
                     buy_sell_count-=1
                     pass_renzoku_count=0
-                    money, ethereum, total_money = sell_simple(Qmax,money, ethereum, total_money, current_price)
+                    money, ethereum, total_money = sell_simple(money, ethereum, total_money, current_price)
                 else:
                     print("PASS")
-                    money, ethereum, total_money = pass_simple(Qmax,money, ethereum, total_money, current_price)
+                    money, ethereum, total_money = pass_simple(money, ethereum, total_money, current_price)
                     pass_reward=0.0#-0.001)#0.01 is default
                     pass_count+=1
 
                 reward = total_money - before_money+pass_reward
                 if buy_sell_count >= 5 and action == 0:
                     print("buy_sell"+str(buy_sell_count)+"回　action==" + str(action))
-                    reward -= (float(abs(buy_sell_count)*10))
+                    reward -= (float(abs(buy_sell_count) ** 2))
                     print(reward)
                 elif buy_sell_count <= -5 and action == 1:
                     print("buy_sell" + str(buy_sell_count) + "回　action==" + str(action))
-                    reward -= (float(abs(buy_sell_count) * 10))
+                    reward -= (float(abs(buy_sell_count) ** 2))
                     print(reward)
+                else:
+                    #reward 1.0がちょうど良い！
+                    reward += 1.0
 
                 before_money = total_money
 
-                if idx % 100 == 1:
+                if idx % 2000 == 1:
                     print("action:" + str(action))
                     print("FINAL" + str(total_money))
                     print("100回中passは"+str(pass_count)+"回")
                     #print("100回中buy_sell_countは" + str(buy_sell_count) + "回")
-
                     pass_count=0
-
                     trade.draw_trading_view()
+                    agent.save('chainerRLAgent')
 
     #agent.stop_episode_and_train(X_train[-1], reward, True)
 
