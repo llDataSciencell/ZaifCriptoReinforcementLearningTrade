@@ -15,59 +15,23 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="240">
+              <caret line="16" column="9" lean-forward="true" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ddqn.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ddqn.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ddqn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="172" column="63" lean-forward="false" selection-start-line="172" selection-start-column="63" selection-end-line="172" selection-end-column="63" />
+            <state relative-caret-position="320">
+              <caret line="179" column="33" lean-forward="true" selection-start-line="179" selection-start-column="33" selection-end-line="179" selection-end-column="33" />
               <folding>
                 <element signature="e#15#29#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ddpg.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="87" column="28" lean-forward="false" selection-start-line="87" selection-start-column="28" selection-end-line="87" selection-end-column="28" />
-              <folding>
-                <element signature="e#15#29#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="reinforcement_example.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement_example.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1320">
-              <caret line="88" column="51" lean-forward="false" selection-start-line="88" selection-start-column="51" selection-end-line="88" selection-end-column="51" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="trade_class.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/trade_class.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2490">
-              <caret line="166" column="71" lean-forward="false" selection-start-line="166" selection-start-column="71" selection-end-line="166" selection-end-column="71" />
-              <folding>
-                <element signature="e#105#123#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -107,9 +71,9 @@
         <option value="$PROJECT_DIR$/src/main.py" />
         <option value="$PROJECT_DIR$/src/trade_class.py" />
         <option value="$PROJECT_DIR$/src/reinforcement_example.py" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/ddpg.py" />
         <option value="$PROJECT_DIR$/src/ddqn.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -470,7 +434,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#15#29#0" expanded="true" />
+            <element signature="e#15#29#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -480,7 +444,7 @@
         <state relative-caret-position="1320">
           <caret line="88" column="51" lean-forward="false" selection-start-line="88" selection-start-column="51" selection-end-line="88" selection-end-column="51" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -490,7 +454,7 @@
         <state relative-caret-position="2490">
           <caret line="166" column="71" lean-forward="false" selection-start-line="166" selection-start-column="71" selection-end-line="166" selection-end-column="71" />
           <folding>
-            <element signature="e#105#123#0" expanded="true" />
+            <element signature="e#105#123#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -511,7 +475,7 @@
         <state relative-caret-position="2385">
           <caret line="166" column="71" lean-forward="false" selection-start-line="166" selection-start-column="71" selection-end-line="166" selection-end-column="71" />
           <folding>
-            <element signature="e#105#123#0" expanded="true" />
+            <element signature="e#105#123#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -521,7 +485,7 @@
         <state relative-caret-position="495">
           <caret line="55" column="0" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
           <folding>
-            <element signature="e#15#29#0" expanded="true" />
+            <element signature="e#15#29#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -532,7 +496,7 @@
         <state relative-caret-position="2385">
           <caret line="166" column="71" lean-forward="false" selection-start-line="166" selection-start-column="71" selection-end-line="166" selection-end-column="71" />
           <folding>
-            <element signature="e#105#123#0" expanded="true" />
+            <element signature="e#105#123#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -676,7 +640,7 @@
         <state relative-caret-position="593">
           <caret line="37" column="17" lean-forward="false" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
           <folding>
-            <element signature="e#105#123#0" expanded="true" />
+            <element signature="e#105#123#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -700,7 +664,7 @@
         <state relative-caret-position="420">
           <caret line="28" column="8" lean-forward="true" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="26" />
           <folding>
-            <element signature="e#105#123#0" expanded="true" />
+            <element signature="e#105#123#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -773,7 +737,7 @@
         <state relative-caret-position="2490">
           <caret line="166" column="71" lean-forward="false" selection-start-line="166" selection-start-column="71" selection-end-line="166" selection-end-column="71" />
           <folding>
-            <element signature="e#105#123#0" expanded="true" />
+            <element signature="e#105#123#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -783,16 +747,8 @@
         <state relative-caret-position="1320">
           <caret line="88" column="51" lean-forward="false" selection-start-line="88" selection-start-column="51" selection-end-line="88" selection-end-column="51" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -801,18 +757,26 @@
         <state relative-caret-position="575">
           <caret line="87" column="28" lean-forward="false" selection-start-line="87" selection-start-column="28" selection-end-line="87" selection-end-column="28" />
           <folding>
-            <element signature="e#15#29#0" expanded="true" />
+            <element signature="e#15#29#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ddqn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="172" column="63" lean-forward="false" selection-start-line="172" selection-start-column="63" selection-end-line="172" selection-end-column="63" />
+        <state relative-caret-position="320">
+          <caret line="179" column="33" lean-forward="true" selection-start-line="179" selection-start-column="33" selection-end-line="179" selection-end-column="33" />
           <folding>
             <element signature="e#15#29#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="9" lean-forward="true" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
