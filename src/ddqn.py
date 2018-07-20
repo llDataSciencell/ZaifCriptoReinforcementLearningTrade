@@ -74,7 +74,7 @@ class QFunction(chainer.Chain):
 
 model = QFunction(obs_size=obs_size, n_actions=n_actions)
 #opt = rmsprop_async.RMSpropAsync(lr=7e-4, eps=0.01, alpha=0.98)
-opt=chainer.optimizers.Adam(eps=1e-4)
+opt=chainer.optimizers.Adam(eps=1e-5)
 opt.setup(model)
 
 # Set the discount factor that discounts future rewards.
@@ -170,7 +170,7 @@ for i in range(0,3):
                     print("sell")
                     buy_sell_count-=1
                     bought_price=inventory.pop(0)
-                    reward += max(current_price-bought_price,0)#current_price-bought_price#
+                    reward += 0.01*(current_price-bought_price)#max(current_price-bought_price,0)##
                     total_reward += (current_price-bought_price)
                     money, ethereum, total_money = sell_simple(money, ethereum, total_money, current_price)
                 else:
