@@ -182,7 +182,7 @@ for i in range(0,3):
                 before_money = total_money
 
                 try:
-                    if idx % 1000 == 500:
+                    if idx % 10000 == 500:
                         print("BEGGINING MONEY:"+str(first_total_money))
                         print("FINAL MONEY:" + str(total_money))
                         print("1000回中passは"+str(pass_count)+"回")
