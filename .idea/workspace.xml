@@ -2,15 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f49aae6-1fff-4dd0-a728-8e94d1b37e5b" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ddpg.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ZaifReinforcementLearningTrade.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ZaifReinforcementLearningTrade.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chainerRLAgent/model.npz" beforeDir="false" afterPath="$PROJECT_DIR$/src/chainerRLAgent/model.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chainerRLAgent/optimizer.npz" beforeDir="false" afterPath="$PROJECT_DIR$/src/chainerRLAgent/optimizer.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chainerRLAgent/target_model.npz" beforeDir="false" afterPath="$PROJECT_DIR$/src/chainerRLAgent/target_model.npz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ddpg.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ddpg.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ddqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ddqn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gym/FxEnv/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gym/FxEnv/fx_env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gym/FxEnv/trade_class.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gym/__init__.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,8 +27,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="225">
-                <caret line="15" column="33" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
+              <first_editor relative-caret-position="300">
+                <caret line="20" column="32" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
               </first_editor>
               <second_editor />
             </state>
@@ -39,8 +38,8 @@
       <file leaf-file-name="ddqn.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ddqn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="879">
-              <caret line="200" selection-start-line="200" selection-end-line="200" />
+            <state relative-caret-position="3936">
+              <caret line="156" selection-start-line="156" selection-end-line="156" />
               <folding>
                 <element signature="e#15#29#0" expanded="true" />
               </folding>
@@ -51,8 +50,8 @@
       <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="30" column="10" lean-forward="true" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+            <state relative-caret-position="658">
+              <caret line="87" column="28" selection-start-line="87" selection-start-column="28" selection-end-line="87" selection-end-column="28" />
               <folding>
                 <element signature="e#15#29#0" expanded="true" />
               </folding>
@@ -64,7 +63,7 @@
         <entry file="file://$PROJECT_DIR$/src/reinforcement_example.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="864">
-              <caret line="88" column="51" lean-forward="true" selection-start-line="88" selection-start-column="51" selection-end-line="88" selection-end-column="51" />
+              <caret line="88" column="51" selection-start-line="88" selection-start-column="51" selection-end-line="88" selection-end-column="51" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -75,7 +74,7 @@
       <file leaf-file-name="trade_class.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/trade_class.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="921">
+            <state relative-caret-position="2311">
               <caret line="166" column="71" selection-start-line="166" selection-start-column="71" selection-end-line="166" selection-end-column="71" />
               <folding>
                 <element signature="e#105#123#0" expanded="true" />
@@ -102,6 +101,8 @@
       <find>obs_size</find>
       <find>Qmax</find>
       <find>render</find>
+      <find>trade</find>
+      <find>buy_sell_num</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -115,8 +116,8 @@
         <option value="$PROJECT_DIR$/src/train.py" />
         <option value="$PROJECT_DIR$/src/main.py" />
         <option value="$PROJECT_DIR$/src/trade_class.py" />
-        <option value="$PROJECT_DIR$/src/ddqn.py" />
         <option value="$PROJECT_DIR$/src/reinforcement_example.py" />
+        <option value="$PROJECT_DIR$/src/ddqn.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/ddpg.py" />
       </list>
@@ -129,8 +130,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="y" value="23" />
     <option name="width" value="1680" />
-    <option name="height" value="1050" />
+    <option name="height" value="947" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -722,7 +724,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/trade_class.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="921">
+        <state relative-caret-position="2311">
           <caret line="166" column="71" selection-start-line="166" selection-start-column="71" selection-end-line="166" selection-end-column="71" />
           <folding>
             <element signature="e#105#123#0" expanded="true" />
@@ -730,20 +732,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ddqn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="879">
-          <caret line="200" selection-start-line="200" selection-end-line="200" />
-          <folding>
-            <element signature="e#15#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement_example.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="864">
-          <caret line="88" column="51" lean-forward="true" selection-start-line="88" selection-start-column="51" selection-end-line="88" selection-end-column="51" />
+          <caret line="88" column="51" selection-start-line="88" selection-start-column="51" selection-end-line="88" selection-end-column="51" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
@@ -758,17 +750,27 @@
       </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="225">
-            <caret line="15" column="33" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
+          <first_editor relative-caret-position="300">
+            <caret line="20" column="32" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
           </first_editor>
           <second_editor />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/ddqn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3936">
+          <caret line="156" selection-start-line="156" selection-end-line="156" />
+          <folding>
+            <element signature="e#15#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="10" lean-forward="true" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+        <state relative-caret-position="658">
+          <caret line="87" column="28" selection-start-line="87" selection-start-column="28" selection-end-line="87" selection-end-column="28" />
           <folding>
             <element signature="e#15#29#0" expanded="true" />
           </folding>

@@ -16,3 +16,6 @@
 - 現在保有している資産のバランスも強化学習の入力として使用する。
 ## urls
 - https://github.com/chainer/chainerrl/tree/master/examples/gym
+
+## Install
+- Keras==2.0.9(Keras >= 2.0.7が必須)
