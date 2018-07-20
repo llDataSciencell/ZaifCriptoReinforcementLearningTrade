@@ -150,6 +150,7 @@ for i in range(0,3):
     pass_count=0
     buy_sell_count=0#buy+ sell -
     pass_renzoku_count=0
+    inventory=[]
     for idx in range(0, len(price)):
                 current_price = X_train[idx][-1]
                 buy_sell_num_flag=[1.0,0.0,buy_sell_count] if buy_sell_count >= 1 else [0.0,1.0,buy_sell_count]
@@ -159,35 +160,22 @@ for i in range(0,3):
 
                 trade.update_trading_view(current_price, action)
 
-                pass_reward=0
                 if action == 0:
                     print("buy")
                     buy_sell_count+=1
-                    pass_renzoku_count=0
+                    inventory.append(current_price)
                     money, ethereum, total_money = buy_simple(money, ethereum, total_money, current_price)
-                elif action == 1:
+                elif action == 1 and len(inventory) > 0:
                     print("sell")
                     buy_sell_count-=1
-                    pass_renzoku_count=0
+                    bought_price=inventory.pop(0)
+                    reward += max(current_price-bought_price,0)
                     money, ethereum, total_money = sell_simple(money, ethereum, total_money, current_price)
                 else:
                     print("PASS")
                     money, ethereum, total_money = pass_simple(money, ethereum, total_money, current_price)
-                    pass_reward=0.0#-0.001)#0.01 is default
+                    reward+=0.00000
                     pass_count+=1
-
-                reward = total_money - before_money+pass_reward
-                if buy_sell_count >= 5 and action == 0:
-                    print("buy_sell"+str(buy_sell_count)+"回　action==" + str(action))
-                    reward -= (float(abs(buy_sell_count) ** 2))
-                    print(reward)
-                elif buy_sell_count <= -5 and action == 1:
-                    print("buy_sell" + str(buy_sell_count) + "回　action==" + str(action))
-                    reward -= (float(abs(buy_sell_count) ** 2))
-                    print(reward)
-                else:
-                    #reward 1.0がちょうど良い！
-                    reward += 1.0
 
                 before_money = total_money
 
