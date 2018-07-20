@@ -132,7 +132,7 @@ def pass_simple(money,ethereum,total_money,current_price):
     total_money = money + float(ethereum * current_price)
     return money,ethereum,total_money
 try:
-  agent.load('polo_agent')
+  agent.load('chainerRLAgent')
 except:
     print("Agent load failed")
 
@@ -150,6 +150,7 @@ for i in range(0,3):
     pass_count=0
     buy_sell_count=0#buy+ sell -
     pass_renzoku_count=0
+    total_reward=0
     inventory=[]
     for idx in range(0, len(price)):
                 current_price = X_train[idx][-1]
@@ -169,7 +170,8 @@ for i in range(0,3):
                     print("sell")
                     buy_sell_count-=1
                     bought_price=inventory.pop(0)
-                    reward += max(current_price-bought_price,0)
+                    reward += max(current_price-bought_price,0)#current_price-bought_price#
+                    total_reward += (current_price-bought_price)
                     money, ethereum, total_money = sell_simple(money, ethereum, total_money, current_price)
                 else:
                     print("PASS")
@@ -179,13 +181,19 @@ for i in range(0,3):
 
                 before_money = total_money
 
-                if idx % 2000 == 1:
-                    print("action:" + str(action))
-                    print("FINAL" + str(total_money))
-                    print("100回中passは"+str(pass_count)+"回")
-                    #print("100回中buy_sell_countは" + str(buy_sell_count) + "回")
-                    pass_count=0
-                    trade.draw_trading_view()
+                try:
+                    if idx % 1000 == 500:
+                        print("BEGGINING MONEY:"+str(first_total_money))
+                        print("FINAL MONEY:" + str(total_money))
+                        print("1000回中passは"+str(pass_count)+"回")
+                        print("1000回終わった後のbuy_sell_countは" + str(buy_sell_count) + "回")
+                        print("total_reward:"+str(total_reward))
+                        pass_count=0
+                        trade.draw_trading_view()
+                except:
+                    pass
+
+                if idx % 10000 == 10:
                     agent.save('chainerRLAgent')
 
     #agent.stop_episode_and_train(X_train[-1], reward, True)
