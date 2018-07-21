@@ -151,7 +151,7 @@ for i in range(0,3):
     buy_sell_count=0#buy+ sell -
     pass_renzoku_count=0
     total_reward=0
-    inventory=[]
+
     for idx in range(100000, len(price)):
                 current_price = X_train[idx][-1]
                 buy_sell_num_flag=[1.0,0.0,buy_sell_count] if buy_sell_count >= 1 else [0.0,1.0,buy_sell_count]
@@ -164,17 +164,13 @@ for i in range(0,3):
                 if action == 0:
                     print("buy")
                     buy_sell_count+=1
-                    inventory.append(current_price)
                     money, ethereum, total_money = buy_simple(money, ethereum, total_money, current_price)
-                elif action == 1 and len(inventory) > 0:
+                    reward += 0.01 * (total_money - before_money)  # max(current_price-bought_price,0)##
+                elif action == 1:
                     print("sell")
                     buy_sell_count-=1
-                    bought_price=inventory.pop(0)
-                    reward += 0.01*(current_price-bought_price)#max(current_price-bought_price,0)##
-                    total_reward += (current_price-bought_price)
                     money, ethereum, total_money = sell_simple(money, ethereum, total_money, current_price)
-                elif action== 1 and len(inventory) <= 0:
-                    reward -= -0.1
+                    reward += 0.01 * (total_money - before_money)  # max(current_price-bought_price,0)##
                 elif action==2:
                     print("PASS")
                     money, ethereum, total_money = pass_simple(money, ethereum, total_money, current_price)
@@ -190,7 +186,10 @@ for i in range(0,3):
                         print("1000回終わった後のbuy_sell_countは" + str(buy_sell_count) + "回")
                         print("total_reward:"+str(total_reward))
                         pass_count=0
-                        trade.draw_trading_view()
+                        try:
+                            trade.draw_trading_view()
+                        except:
+                            pass
                         agent.save('chainerRLAgent')
 
     #agent.stop_episode_and_train(X_train[-1], reward, True)
@@ -198,48 +197,3 @@ for i in range(0,3):
     # Save an agent to the 'agent' directory
     agent.save('chainerRLAgent')
     print("START MONEY" + str(first_total_money))
-
-
-#テスト
-'''
-for i in range(0,1):
-    reward=0
-
-    price = y_train
-    money = 300
-    before_money = money
-    ethereum = 0.01
-    total_money = money + np.float64(price[0] * ethereum)
-    first_total_money = total_money
-
-    for idx in range(0, len(price)):
-                print(idx)
-                current_price = price[idx]
-                action = agent.act(np.array(X_train[idx],dtype='f'))#idx+1が重要。
-
-                trade.update_trading_view(current_price,action)
-
-                Qmax=1.0#.evaluate_actions(action)
-
-                if action == 0:
-                    print("buy")
-                    money, ethereum, total_money = buy_simple(Qmax,money, ethereum, total_money, current_price)
-                elif action == 1:
-                    print("sell")
-                    money, ethereum, total_money = sell_simple(Qmax,money, ethereum, total_money, current_price)
-                else:
-                    print("PASS")
-
-                reward = total_money - before_money
-                before_money = total_money
-
-                print("Total_money" + str(total_money))
-
-                if idx % 100 == 10:
-                    trade.draw_trading_view()
-
-    # Save an agent to the 'agent' directory
-    agent.save('chainerRLAgent')
-    print("START MONEY" + str(first_total_money))
-
-'''

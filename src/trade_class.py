@@ -171,3 +171,5 @@ class TradeClass(object):
         ax.set_ylabel("Price[$]")
         plt.grid(fig)
         plt.show(fig)
+        self.price_history=[]
+        self.trade_history=[]
