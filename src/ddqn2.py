@@ -104,7 +104,7 @@ def env_execute(action,current_price,next_price,cripto_amount,usdt_amount):
 
     return reward
 
-buy_sell_fee = 0.0000
+buy_sell_fee = 0.0005
 def buy_simple(money, ethereum, total_money, current_price):
         first_money, first_ethereum, first_total_money = money, ethereum, total_money
         spend = money * 0.1
@@ -152,7 +152,7 @@ for i in range(0,3):
     pass_renzoku_count=0
     total_reward=0
 
-    for idx in range(100000, len(price)):
+    for idx in range(200000, len(price)):
                 current_price = X_train[idx][-1]
                 buy_sell_num_flag=[1.0,0.0,buy_sell_count] if buy_sell_count >= 1 else [0.0,1.0,buy_sell_count]
                 action = agent.act_and_train(np.array(X_train[idx]+buy_sell_num_flag,dtype='f'), reward)#idx+1が重要。
@@ -165,18 +165,17 @@ for i in range(0,3):
                     print("buy")
                     buy_sell_count+=1
                     money, ethereum, total_money = buy_simple(money, ethereum, total_money, current_price)
-                    reward += 0.01 * (total_money - before_money)  # max(current_price-bought_price,0)##
                 elif action == 1:
                     print("sell")
                     buy_sell_count-=1
                     money, ethereum, total_money = sell_simple(money, ethereum, total_money, current_price)
-                    reward += 0.01 * (total_money - before_money)  # max(current_price-bought_price,0)##
                 elif action==2:
                     print("PASS")
                     money, ethereum, total_money = pass_simple(money, ethereum, total_money, current_price)
                     reward+=0.00000
                     pass_count+=1
-
+                reward += 0.01 * (total_money - before_money)  # max(current_price-bought_price,0)##
+                
                 before_money = total_money
 
                 if idx % 10000 == 500:
