@@ -1,0 +1,20 @@
+2018-07-20 16:33:26.021166: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2018-07-20 16:33:26.021246: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2018-07-20 16:33:26.021261: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+2018-07-20 16:33:26.021272: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+Using TensorFlow backend.
+Traceback (most recent call last):
+  File "train.py", line 54, in <module>
+    agent.model.save("models/model_ep" + str(e))
+  File "/Users/user/anaconda3/envs/zaiftrade/lib/python3.5/site-packages/keras/engine/network.py", line 1104, in save
+    save_model(self, filepath, overwrite, include_optimizer)
+  File "/Users/user/anaconda3/envs/zaiftrade/lib/python3.5/site-packages/keras/engine/saving.py", line 106, in save_model
+    f = h5py.File(filepath, mode='w')
+  File "/Users/user/anaconda3/envs/zaiftrade/lib/python3.5/site-packages/h5py/_hl/files.py", line 271, in __init__
+    fid = make_fid(name, mode, userblock_size, fapl, swmr=swmr)
+  File "/Users/user/anaconda3/envs/zaiftrade/lib/python3.5/site-packages/h5py/_hl/files.py", line 107, in make_fid
+    fid = h5f.create(name, h5f.ACC_TRUNC, fapl=fapl, fcpl=fcpl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper (/private/var/folders/my/m6ynh3bn6tq06h7xr3js0z7r0000gn/T/pip-j6_vt23x-build/h5py/_objects.c:2840)
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper (/private/var/folders/my/m6ynh3bn6tq06h7xr3js0z7r0000gn/T/pip-j6_vt23x-build/h5py/_objects.c:2798)
+  File "h5py/h5f.pyx", line 98, in h5py.h5f.create (/private/var/folders/my/m6ynh3bn6tq06h7xr3js0z7r0000gn/T/pip-j6_vt23x-build/h5py/h5f.c:2284)
+OSError: Unable to create file (Unable to open file: name = 'models/model_ep0', errno = 2, error message = 'no such file or directory', flags = 13, o_flags = 602)

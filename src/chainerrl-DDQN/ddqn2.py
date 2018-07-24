@@ -167,18 +167,10 @@ for i in range(0,3):
                     print("buy")
                     buy_sell_count+=1
                     money, ethereum, total_money = buy_simple(money, ethereum, total_money, current_price)
-                    if buy_sell_count<0:
-                        reward+=0.01
-                    else:
-                        reward-=0.01
                 elif action == 1:
                     print("sell")
                     buy_sell_count-=1
                     money, ethereum, total_money = sell_simple(money, ethereum, total_money, current_price)
-                    if buy_sell_count > 0:
-                        reward+=0.01
-                    else:
-                        reward-=0.01
                 elif action==2:
                     print("PASS")
                     money, ethereum, total_money = pass_simple(money, ethereum, total_money, current_price)
