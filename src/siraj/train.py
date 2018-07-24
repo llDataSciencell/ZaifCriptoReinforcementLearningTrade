@@ -52,3 +52,4 @@ for e in range(episode_count + 1):
 
 	if e % 10 == 0:
 		agent.model.save("models/model_ep" + str(e))
+		pass
