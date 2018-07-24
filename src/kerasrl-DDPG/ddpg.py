@@ -24,9 +24,10 @@ import numpy as np
 import random
 import time
 
-import poloniex
 import datetime
 import copy
+import os, sys
+sys.path.append(os.pardir)
 
 try:
   agent.load('polo_agent')

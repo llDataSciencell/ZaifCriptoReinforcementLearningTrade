@@ -6,7 +6,9 @@ import chainerrl
 from chainerrl.agents import a3c
 import chainer.links as L
 import chainer.functions as F
-
+import os, sys
+print(os.getcwd())
+sys.path.append(os.getcwd())
 #from chainerrl.action_value import DiscreteActionValue
 #from chainerrl.action_value import QuadraticActionValue
 #from chainerrl.optimizers import rmsprop_async
@@ -152,7 +154,7 @@ for i in range(0,3):
     pass_renzoku_count=0
     total_reward=0
 
-    for idx in range(200000, len(price)):
+    for idx in range(0, len(price)):
                 current_price = X_train[idx][-1]
                 buy_sell_num_flag=[1.0,0.0,abs(buy_sell_count)] if buy_sell_count >= 1 else [0.0,1.0,abs(buy_sell_count)]
                 action = agent.act_and_train(np.array(X_train[idx]+buy_sell_num_flag,dtype='f'), reward)#idx+1が重要。
