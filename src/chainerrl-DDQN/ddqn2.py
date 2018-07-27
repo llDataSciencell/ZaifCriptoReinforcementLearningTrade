@@ -18,11 +18,9 @@ from chainerrl import policies
 
 import numpy as np
 import random
-import time
-
-import poloniex
-import datetime
 import copy
+import sys,os
+sys.path.append(os.pardir)
 from trade_class import TradeClass
 trade=TradeClass()
 price_data = trade.read_bitflyer_json()

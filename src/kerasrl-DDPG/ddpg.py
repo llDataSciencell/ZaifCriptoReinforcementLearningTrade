@@ -1,11 +1,5 @@
 #coding: utf-8
-import chainer
-#import chainer.functions as F
-#import chainer.links as L
-import chainerrl
-from chainerrl.agents import a3c
-import chainer.links as L
-import chainer.functions as F
+
 from keras.models import Sequential, Model
 from keras.layers import Dense, Activation, Flatten, Input, Concatenate
 from keras.optimizers import Adam
@@ -13,26 +7,12 @@ from keras.optimizers import Adam
 from rl.agents import DDPGAgent
 from rl.memory import SequentialMemory
 from rl.random import OrnsteinUhlenbeckProcess
-#from chainerrl.action_value import DiscreteActionValue
-#from chainerrl.action_value import QuadraticActionValue
-#from chainerrl.optimizers import rmsprop_async
-
-from chainerrl import links
-from chainerrl import policies
-
 import numpy as np
 import random
 import time
-
-import datetime
 import copy
 import os, sys
 sys.path.append(os.pardir)
-
-try:
-  agent.load('polo_agent')
-except:
-    print("Agent load failed")
 
 import gym
 import random
