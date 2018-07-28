@@ -71,8 +71,8 @@ def getStateLiveMode(price_array):
 
     return res
 def calc_low(data,idx,window_size,one_tick_sec_term):
-    t=idx+1
     if idx <= window_size * (one_tick_sec_term/60):
+        #TODO modify
         return [0 for i in range(0,window_size)]
     low_price=[]
     low=float('inf')
@@ -90,14 +90,11 @@ def calc_low(data,idx,window_size,one_tick_sec_term):
             low_price.append(low)
             low = float('inf')
 
-    low_price.reverse()
-
-    return low_price
 
 def calc_high(data,idx,window_size,one_tick_sec_term):
-    t=idx+1
 
     if idx <= window_size * (one_tick_sec_term/60):
+        #TODO modify
         return [0 for i in range(0,window_size)]
     high_price=[]
     high=-float('inf')
@@ -108,8 +105,6 @@ def calc_high(data,idx,window_size,one_tick_sec_term):
             #print("data:   ")
             #print(data[idx - (window_size + 1) * int(one_tick_sec_term / 60):idx + 1])
             high_price.reverse()
-            #print("low_price array:")
-            #print(high_price)
             return high_price
         if i % int(one_tick_sec_term/60) == 0:
             high_price.append(high)
@@ -126,13 +121,13 @@ low_price
 def getStateFromCsvData(data,idx,window_size):
     t=idx+1
     #tはidxに+1したもの。添字の都合。
-    print("getStateFromCsvData"+str(calc_high(data,idx,window_size,300)))
-    price300_sec_high=getStateLiveMode(calc_high(data,idx,window_size,300))
-    price3600_sec_high=getStateLiveMode(calc_high(data,idx,window_size,3600))
-    price86400_sec_high=getStateLiveMode(calc_high(data,idx,window_size,86400))
-    price300_sec_low=getStateLiveMode(calc_low(data,idx,window_size,300))
-    price3600_sec_low=getStateLiveMode(calc_low(data,idx,window_size,3600))
-    price86400_sec_low=getStateLiveMode(calc_low(data,idx,window_size,86400))
+    print("getStateFromCsvData"+str(calc_high(data,idx,window_size+1,300)))
+    price300_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,300))
+    price3600_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,3600))
+    price86400_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,86400))
+    price300_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,300))
+    price3600_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,3600))
+    price86400_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,86400))
     #print("price300:　　"+str(price300_sec_high))
     #print("data[] 300/60　　　"+str(data[int(t-window_size*300/60)-1:int(t):int(300/60)]))
     #print("data[] 3600/60    "+str(data[t - window_size * int(3600 / 60) - 1:t:int(3600 / 60)]))
@@ -281,7 +276,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(calc_high([0 if idx % 3 == 0 else 100 for idx in range(0,3000)],1007,window_size,300)[10],100)
 
     def test_getState(self):
-        self.assertEqual(len(getStateLiveMode(calc_high(data, 1000, window_size, 300))),window_size)
+        self.assertEqual(len(getStateLiveMode(calc_high(data, 1000, window_size+1, 300))),window_size)
 
     def test_getState(self):
         self.assertEqual(len(getStateLiveMode(calc_high(data, 1, window_size+1, 300))),window_size)
