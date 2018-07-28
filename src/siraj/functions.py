@@ -49,7 +49,8 @@ def sigmoid(gamma):
 
 # returns an an n-day state representation ending at time t
 # 入力データを作る際も、価格ごとの差分をとってシグモイドに入れている。
-def getState(data, idx, n):
+def getState(data, idx, window_size):
+    n=window_size+1
     t=idx+1
     #t(idx)に+1したのは、
     #aaa[100:200:10] =>[100, 110, 120, 130, 140, 150, 160, 170, 180, 190]で200番目の数字がこぼれてしまうから。
@@ -70,6 +71,7 @@ def getStateLiveMode(price_array):
     return res
 def calc_low(data,idx,window_size,one_tick_sec_term):
     t=idx+1
+
     if idx <= window_size * (one_tick_sec_term/60):
         return [0 for idx in range(0,window_size)]
     low_price=[]
@@ -94,6 +96,7 @@ def calc_low(data,idx,window_size,one_tick_sec_term):
 
 def calc_high(data,idx,window_size,one_tick_sec_term):
     t=idx+1
+
     if idx <= window_size * (one_tick_sec_term/60):
         return [0 for idx in range(0,window_size)]
     high_price=[]
@@ -135,7 +138,7 @@ def getStateFromCsvData(data,idx,window_size):
     #print("data[] 3600/60    "+str(data[t - window_size * int(3600 / 60) - 1:t:int(3600 / 60)]))
     #print("data[idx]"+str(data[t-1]))
     #print("data[idx]" + str(data[t-50:t]))
-    return price300_sec_high,price3600_sec_high,price86400_sec_high,price300_sec_low, price3600_sec_low, price86400_sec_low
+    return [price300_sec_high,price3600_sec_high,price86400_sec_high,price300_sec_low, price3600_sec_low, price86400_sec_low]
 
 def make_input_data(window_size):
     # ローソク足の時間を指定
@@ -147,12 +150,12 @@ def make_input_data(window_size):
     res300 = json.loads(requests.get("https://api.cryptowat.ch/markets/bitflyer/btcjpy/ohlc?periods=300").text)
     #res86400 = json.loads(requests.get("https://api.cryptowat.ch/markets/bitflyer/btcjpy/ohlc?periods=86400").text)
 
-    price300_sec_high = [res300["result"]["300"][-idx][2] for idx in range(1, window_size+1)]
-    #price3600_sec_high=[res3600["result"]["3600"][-idx][2] for idx in range(1,window_size+1)]
-    #price86400_sec_high = [res86400["result"]["86400"][-idx][2] for idx in range(1, window_size+1)]
-    price300_sec_low = [res300["result"]["300"][-idx][3] for idx in range(1, window_size+1)]
-    #price3600_sec_low=[res3600["result"]["3600"][-idx][3] for idx in range(1,window_size+1)]
-    #price86400_sec_low = [res86400["result"]["86400"][-idx][3] for idx in range(1, window_size+1)]
+    price300_sec_high = [res300["result"]["300"][-idx][2] for idx in range(1, window_size+2)]
+    #price3600_sec_high=[res3600["result"]["3600"][-idx][2] for idx in range(1,window_size+2)]
+    #price86400_sec_high = [res86400["result"]["86400"][-idx][2] for idx in range(1, window_size+2)]
+    price300_sec_low = [res300["result"]["300"][-idx][3] for idx in range(1, window_size+2)]
+    #price3600_sec_low=[res3600["result"]["3600"][-idx][3] for idx in range(1,window_size+2)]
+    #price86400_sec_low = [res86400["result"]["86400"][-idx][3] for idx in range(1, window_size+2)]
 
     print(price300_sec_high)
     #必ずreturnでは複数の配列を返すこと。でないとtestcaseでエラーが出る。
@@ -168,112 +171,121 @@ window_size = 50
 data=read_bitflyer_json()
 
 class TestStringMethods(unittest.TestCase):
+    #calc_high,calc_lowはwindow_size+1の長さの配列を返却
 
+    #Liveはwindow_sizeぴったり
     def test_make_input1(self):
-        self.assertEqual(len(make_input_data(window_size+1)[0]), 50)
+        self.assertEqual(len(make_input_data(window_size)[0]), 50)
 
     def test_getStateCsv(self):
         idx=1000
         self.assertEqual(len(getStateFromCsvData(data, idx, window_size)[0]),50)
 
     def test_calc_high_low1(self):
-        self.assertEqual(len(calc_low(data,1000,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1000,window_size,300)),window_size)
     def test_calc_high_low2(self):
-        self.assertEqual(len(calc_low(data,1001,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1001,window_size,300)),window_size)
     def test_calc_high_low3(self):
-        self.assertEqual(len(calc_low(data,1002,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1002,window_size,300)),window_size)
     def test_calc_high_low4(self):
-        self.assertEqual(len(calc_low(data,1003,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1003,window_size,300)),window_size)
     def test_calc_high_low5(self):
-        self.assertEqual(len(calc_low(data,1004,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1004,window_size,300)),window_size)
     def test_calc_high_low6(self):
-        self.assertEqual(len(calc_low(data,1005,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1005,window_size,300)),window_size)
     def test_calc_high_low7(self):
-        self.assertEqual(len(calc_low(data,1006,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1006,window_size,300)),window_size)
     def test_calc_high_low8(self):
-        self.assertEqual(len(calc_low(data,1007,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1007,window_size,300)),window_size)
     def test_calc_high1(self):
-        self.assertEqual(len(calc_high(data,1000,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1000,window_size,300)),window_size)
     def test_calc_high2(self):
-        self.assertEqual(len(calc_high(data,1001,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1001,window_size,300)),window_size)
     def test_calc_high3(self):
-        self.assertEqual(len(calc_high(data,1002,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1002,window_size,300)),window_size)
     def test_calc_high4(self):
-        self.assertEqual(len(calc_high(data,1003,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1003,window_size,300)),window_size)
     def test_calc_high5(self):
-        self.assertEqual(len(calc_high(data,1004,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1004,window_size,300)),window_size)
     def test_calc_high6(self):
-        self.assertEqual(len(calc_high(data,1005,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1005,window_size,300)),window_size)
     def test_calc_high7(self):
-        self.assertEqual(len(calc_high(data,1006,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1006,window_size,300)),window_size)
     def test_calc_high8(self):
-        self.assertEqual(len(calc_high(data,1007,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1007,window_size,300)),window_size)
 
     def test_calc_high_low1(self):
-        self.assertEqual(len(calc_low(data,1000,window_size,86400)),50)
+        self.assertEqual(len(calc_low(data,1000,window_size,86400)),window_size)
     def test_calc_high_low2(self):
-        self.assertEqual(len(calc_low(data,1001,window_size,86400)),50)
+        self.assertEqual(len(calc_low(data,1001,window_size,86400)),window_size)
     def test_calc_high_low3(self):
-        self.assertEqual(len(calc_low(data,1002,window_size,86400)),50)
+        self.assertEqual(len(calc_low(data,1002,window_size,86400)),window_size)
     def test_calc_high_low4(self):
-        self.assertEqual(len(calc_low(data,1003,window_size,86400)),50)
+        self.assertEqual(len(calc_low(data,1003,window_size,86400)),window_size)
     def test_calc_high_low5(self):
-        self.assertEqual(len(calc_low(data,1004,window_size,86400)),50)
+        self.assertEqual(len(calc_low(data,1004,window_size,86400)),window_size)
     def test_calc_high_low6(self):
-        self.assertEqual(len(calc_low(data,1005,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1005,window_size,300)),window_size)
     def test_calc_high_low7(self):
-        self.assertEqual(len(calc_low(data,1006,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1006,window_size,300)),window_size)
     def test_calc_high_low8(self):
-        self.assertEqual(len(calc_low(data,1007,window_size,300)),50)
+        self.assertEqual(len(calc_low(data,1007,window_size,300)),window_size)
     def test_calc_high1(self):
-        self.assertEqual(len(calc_high(data,1000,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1000,window_size,300)),window_size)
     def test_calc_high2(self):
-        self.assertEqual(len(calc_high(data,1001,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1001,window_size,300)),window_size)
     def test_calc_high3(self):
-        self.assertEqual(len(calc_high(data,1002,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1002,window_size,300)),window_size)
     def test_calc_high4(self):
-        self.assertEqual(len(calc_high(data,1003,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1003,window_size,300)),window_size)
     def test_calc_high5(self):
-        self.assertEqual(len(calc_high(data,1004,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1004,window_size,300)),window_size)
     def test_calc_high6(self):
-        self.assertEqual(len(calc_high(data,1005,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1005,window_size,300)),window_size)
     def test_calc_high7(self):
-        self.assertEqual(len(calc_high(data,1006,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1006,window_size,300)),window_size)
     def test_calc_high8(self):
-        self.assertEqual(len(calc_high(data,1007,window_size,300)),50)
+        self.assertEqual(len(calc_high(data,1007,window_size,300)),window_size)
 
     def test_calc_high1(self):
-        self.assertEqual(len(calc_high(data, 1008, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1008, window_size, 300)), window_size)
 
     def test_calc_high2(self):
-        self.assertEqual(len(calc_high(data, 1009, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1009, window_size, 300)), window_size)
 
     def test_calc_high3(self):
-        self.assertEqual(len(calc_high(data, 1010, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1010, window_size, 300)), window_size)
 
     def test_calc_high4(self):
-        self.assertEqual(len(calc_high(data, 1011, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1011, window_size, 300)), window_size)
 
     def test_calc_high5(self):
-        self.assertEqual(len(calc_high(data, 1012, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1012, window_size, 300)), window_size)
 
     def test_calc_high6(self):
-        self.assertEqual(len(calc_high(data, 1013, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1013, window_size, 300)), window_size)
 
     def test_calc_high7(self):
-        self.assertEqual(len(calc_high(data, 1014, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1014, window_size, 300)), window_size)
 
     def test_calc_high8(self):
-        self.assertEqual(len(calc_high(data, 1015, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1015, window_size, 300)), window_size)
 
 
     def test_calc_high8(self):
-        self.assertEqual(len(calc_high(data, 0, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 0, window_size, 300)), window_size)
     def test_calc_high8(self):
-        self.assertEqual(len(calc_high(data, 1, window_size, 300)), 50)
+        self.assertEqual(len(calc_high(data, 1, window_size, 300)), window_size)
 
     def test_high_price(self):
         self.assertEqual(calc_high([0 if idx % 3 == 0 else 100 for idx in range(0,3000)],1007,window_size,300)[10],100)
+
+    def test_getState(self):
+        self.assertEqual(len(getStateLiveMode(calc_high(data, 1000, window_size, 300))),window_size)
+
+    def test_getState(self):
+        self.assertEqual(len(getStateLiveMode(calc_high(data, 1, window_size+1, 300))),window_size)
+
     '''
     def test_make_input2(self):
         self.assertEqual(len(make_input_data(window_size)[1]), 50)

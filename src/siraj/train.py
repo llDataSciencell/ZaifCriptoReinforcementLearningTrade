@@ -11,13 +11,13 @@ print(episode_count)
 
 agent = Agent(window_size)
 data = read_bitflyer_json()#getStockDataVec(stock_name)
-make_input_data_from_csv()
+
 length_data = len(data) - 1
 batch_size = 32
 
 for e in range(episode_count + 1):
 	print("Episode " + str(e) + "/" + str(episode_count))
-	state = getStateFromCsvData(data, 0, window_size + 1)
+	state = getStateFromCsvData(data, 0, window_size)
 
 	total_profit = 0
 	agent.inventory = []
@@ -26,7 +26,7 @@ for e in range(episode_count + 1):
 		action = agent.act(state)
 
 		# sit
-		next_state = getStateFromCsvData(data, idx, window_size + 1)
+		next_state = getStateFromCsvData(data, idx, window_size)
 		reward = 0
 
 		if action == 1: # buy
@@ -40,6 +40,7 @@ for e in range(episode_count + 1):
 			print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(data[idx] - bought_price))
 
 		done = True if idx == length_data - 1 else False
+
 		agent.memory.append((state, action, reward, next_state, done))
 		state = next_state
 
