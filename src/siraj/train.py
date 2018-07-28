@@ -26,7 +26,7 @@ for e in range(episode_count + 1):
 		action = agent.act(state)
 
 		# sit
-		next_state = getStateFromCsvData(data, idx + 1, window_size + 1)
+		next_state = getStateFromCsvData(data, idx, window_size + 1)
 		reward = 0
 
 		if action == 1: # buy
