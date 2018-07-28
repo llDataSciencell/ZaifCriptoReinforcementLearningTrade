@@ -64,6 +64,7 @@ def getState(data, idx, window_size):
 
     return np.array([res])
 def getStateLiveMode(price_array):
+    print("PRICE ARRAY:"+str(price_array))
     res=[]
     for i in range(0,len(price_array)-1):
         res.append(sigmoid(int(price_array[i + 1] - price_array[i]) * 0.01))
@@ -71,9 +72,8 @@ def getStateLiveMode(price_array):
     return res
 def calc_low(data,idx,window_size,one_tick_sec_term):
     t=idx+1
-
     if idx <= window_size * (one_tick_sec_term/60):
-        return [0 for idx in range(0,window_size)]
+        return [0 for i in range(0,window_size)]
     low_price=[]
     low=float('inf')
     for i in range(idx,idx-(window_size+1)*int(one_tick_sec_term/60),-1):
@@ -98,7 +98,7 @@ def calc_high(data,idx,window_size,one_tick_sec_term):
     t=idx+1
 
     if idx <= window_size * (one_tick_sec_term/60):
-        return [0 for idx in range(0,window_size)]
+        return [0 for i in range(0,window_size)]
     high_price=[]
     high=-float('inf')
     for i in range(idx,idx-(window_size+1)*int(one_tick_sec_term/60),-1):
@@ -126,19 +126,19 @@ low_price
 def getStateFromCsvData(data,idx,window_size):
     t=idx+1
     #tはidxに+1したもの。添字の都合。
-
-    price300_sec_high=getStateLiveMode(data[t-window_size*int(300/60)-1:t:int(300/60)])
-    price3600_sec_high=getStateLiveMode(data[t-window_size*int(3600/60)-1:t:int(3600/60)])
-    price86400_sec_high=getStateLiveMode(data[t-window_size*int(86400/60)-1:t:int(86400/60)])
-    price300_sec_low=getStateLiveMode(data[t-window_size*int(300/60)-1:t:int(300/60)])
-    price3600_sec_low=getStateLiveMode(data[t-window_size*int(3600/60)-1:t:int(3600/60)])
-    price86400_sec_low=getStateLiveMode(data[t-window_size*int(86400/60)-1:t:int(86400/60)])
+    print("getStateFromCsvData"+str(calc_high(data,idx,window_size,300)))
+    price300_sec_high=getStateLiveMode(calc_high(data,idx,window_size,300))
+    price3600_sec_high=getStateLiveMode(calc_high(data,idx,window_size,3600))
+    price86400_sec_high=getStateLiveMode(calc_high(data,idx,window_size,86400))
+    price300_sec_low=getStateLiveMode(calc_low(data,idx,window_size,300))
+    price3600_sec_low=getStateLiveMode(calc_low(data,idx,window_size,3600))
+    price86400_sec_low=getStateLiveMode(calc_low(data,idx,window_size,86400))
     #print("price300:　　"+str(price300_sec_high))
     #print("data[] 300/60　　　"+str(data[int(t-window_size*300/60)-1:int(t):int(300/60)]))
     #print("data[] 3600/60    "+str(data[t - window_size * int(3600 / 60) - 1:t:int(3600 / 60)]))
     #print("data[idx]"+str(data[t-1]))
     #print("data[idx]" + str(data[t-50:t]))
-    return [price300_sec_high,price3600_sec_high,price86400_sec_high,price300_sec_low, price3600_sec_low, price86400_sec_low]
+    return [np.array(price300_sec_high),np.array(price3600_sec_high),np.array(price86400_sec_high),np.array(price300_sec_low), np.array(price3600_sec_low), np.array(price86400_sec_low)]
 
 def make_input_data(window_size):
     # ローソク足の時間を指定

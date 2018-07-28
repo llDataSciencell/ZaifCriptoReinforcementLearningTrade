@@ -36,17 +36,17 @@ class Agent:
         return model
 
     def _model(self):
-        input1 = keras.layers.Input(shape=(50,), name="in1")
+        input1 = keras.layers.Input(shape=(10,), name="in1")
         x1 = keras.layers.Dense(30, activation='relu')(input1)
-        input2 = keras.layers.Input(shape=(50,), name="in2")
+        input2 = keras.layers.Input(shape=(10,), name="in2")
         x2 = keras.layers.Dense(30, activation='relu')(input2)
-        input3 = keras.layers.Input(shape=(50,), name="in3")
+        input3 = keras.layers.Input(shape=(10,), name="in3")
         x3 = keras.layers.Dense(30, activation='relu')(input3)
-        input4 = keras.layers.Input(shape=(50,), name="in4")
+        input4 = keras.layers.Input(shape=(10,), name="in4")
         x4 = keras.layers.Dense(30, activation='relu')(input4)
-        input5 = keras.layers.Input(shape=(50,), name="in5")
+        input5 = keras.layers.Input(shape=(10,), name="in5")
         x5 = keras.layers.Dense(30, activation='relu')(input5)
-        input6 = keras.layers.Input(shape=(50,), name="in6")
+        input6 = keras.layers.Input(shape=(10,), name="in6")
         x6 = keras.layers.Dense(30, activation='relu')(input6)
         added = keras.layers.Add()([x1, x2, x3, x4, x5, x6])  # equivalent to added = keras.layers.add([x1, x2])
         dense_added = keras.layers.Dense(150)(added)
@@ -70,16 +70,18 @@ class Agent:
         l = len(self.memory)
         for i in range(l - batch_size + 1, l):
             mini_batch.append(self.memory[i])
+            print("mini_batch.append()   "+str(self.memory[i]))
 
         for state, action, reward, next_state, done in mini_batch:
             target = reward
             if not done:
-                print(state[0])
-                target = reward + self.gamma * np.amax(self.model.predict({"in1":np.array(state[0]), "in2":np.array(state[1]), "in3": np.array(state[2]),"in4": np.array(state[3]),"in5": np.array(state[4]),"in6": np.array(state[5])}))
+                #print(state)
+                print("STATE:"+str(state))
+                target = reward + self.gamma * np.amax(self.model.predict({"in1":np.array(state[0]), "in2":np.array(state[1]), "in3": np.array([state[2]]),"in4": np.array([state[3]]),"in5": np.array([state[4]]),"in6": np.array([state[5]])}))
 
-            target_f = self.model.predict({"in1":np.array(state[0]), "in2":np.array(state[1]), "in3": np.array(state[2]),"in4": np.array(state[3]),"in5": np.array(state[4]),"in6": np.array(state[5])})
+            target_f = self.model.predict({"in1":np.array([state[0]]), "in2":np.array([state[1]]), "in3": np.array([state[2]]),"in4": np.array([state[3]]),"in5": np.array([state[4]]),"in6": np.array([state[5]])})
             target_f[0][action] = target
-            print(state[0])
+
             self.model.fit({"in1":np.array(state[0]), "in2":np.array(state[1]), "in3": np.array(state[2]),"in4": np.array(state[3]),"in5": np.array(state[4]),"in6": np.array(state[5])}, target_f, epochs=1, verbose=0)
 
         if self.epsilon > self.epsilon_min:
