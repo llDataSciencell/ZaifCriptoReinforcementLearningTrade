@@ -4,7 +4,7 @@ import sys
 
 print("aaaa")
 
-stock_name, window_size, episode_count = "^GSPC", int(10), int(1000)
+window_size, episode_count = int(10), int(1000)
 print(stock_name)
 print(window_size)
 print(episode_count)
@@ -25,11 +25,9 @@ for e in range(episode_count + 1):
     for idx in range(length_data):
         action = agent.act(state)
 
-        # sit
-        next_state = getStateFromCsvData(data, idx, window_size)
-
+        #TODO idx + 1出なくて良いか？　バグの可能性あり。
+        next_state = getStateFromCsvData(data, idx+1, window_size)
         reward = 0
-        print(next_state)
         if action == 1:  # buy
             agent.inventory.append(data[idx])
             print("Buy: " + formatPrice(data[idx]))
@@ -45,7 +43,7 @@ for e in range(episode_count + 1):
         agent.memory.append((state, action, reward, next_state, done))
         state = next_state
 
-        if done:
+        if idx % 100:
             print("--------------------------------")
             print("Total Profit: " + formatPrice(total_profit))
             print("--------------------------------")
@@ -53,6 +51,5 @@ for e in range(episode_count + 1):
         if len(agent.memory) > batch_size:
             agent.expReplay(batch_size)
 
-    if e % 10 == 0:
-        agent.model.save("models/model_ep" + str(e))
-        pass
+    agent.model.save("models/model_ep" + str(e))
+

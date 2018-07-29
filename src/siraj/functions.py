@@ -64,7 +64,7 @@ def getState(data, idx, window_size):
 
     return np.array([res])
 def getStateLiveMode(price_array):
-    print("PRICE ARRAY:"+str(price_array))
+    #入力->出力で１つ配列が短くなる。
     res=[]
     for i in range(0,len(price_array)-1):
         res.append(sigmoid(int(price_array[i + 1] - price_array[i]) * 0.01))
@@ -80,11 +80,11 @@ def calc_low(data,idx,window_size,one_tick_sec_term):
         if data[i] < low:
             low=data[i]
         if len(low_price) >= window_size:
-            print("data:   ")
-            print(data[idx - (window_size + 1) * int(one_tick_sec_term / 60):idx + 1])
+            #print("data:   ")
+            #print(data[idx - (window_size + 1) * int(one_tick_sec_term / 60):idx + 1])
             low_price.reverse()
-            print("low_price array:")
-            print(low_price)
+            #print("low_price array:")
+            #print(low_price)
             return low_price
         if i % int(one_tick_sec_term/60) == 0:
             low_price.append(low)
@@ -121,7 +121,7 @@ low_price
 def getStateFromCsvData(data,idx,window_size):
     t=idx+1
     #tはidxに+1したもの。添字の都合。
-    print("getStateFromCsvData"+str(calc_high(data,idx,window_size+1,300)))
+    #print("getStateFromCsvData"+str(calc_high(data,idx,window_size+1,300)))
     price300_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,300))
     price3600_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,3600))
     price86400_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,86400))
@@ -152,7 +152,7 @@ def make_input_data(window_size):
     #price3600_sec_low=[res3600["result"]["3600"][-idx][3] for idx in range(1,window_size+2)]
     #price86400_sec_low = [res86400["result"]["86400"][-idx][3] for idx in range(1, window_size+2)]
 
-    print(price300_sec_high)
+    #print(price300_sec_high)
     #必ずreturnでは複数の配列を返すこと。でないとtestcaseでエラーが出る。
     return getStateLiveMode(price300_sec_high),getStateLiveMode(price300_sec_low)#\
     '''
