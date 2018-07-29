@@ -82,15 +82,15 @@ class Agent:
             target = reward
             if not done:
                 #print(state)
-                print("STATE:")
-                print(np.array(state[0]))
-                print(np.array(state[1]))
-                print(np.array(state[2]))
-                print(np.array(state[3]))
-                print(np.array(state[4]))
-                print(np.array(state[5]))
-                print("SHAPE:"+str(np.array(state[0]).shape))
-                print(np.array([0 for i in range(10)]).shape)
+                #print("STATE:")
+                #print(np.array(state[0]))
+                #print(np.array(state[1]))
+                #print(np.array(state[2]))
+                #print(np.array(state[3]))
+                #print(np.array(state[4]))
+                #print(np.array(state[5]))
+                #print("SHAPE:"+str(np.array(state[0]).shape))
+                #print(np.array([0 for i in range(10)]).shape)
                 target = reward + self.gamma * np.amax(self.model.predict({"in1": np.array([[state[0]]]),
                                                                            "in2": np.array([[state[1]]]),
                                                                            "in3": np.array([[state[2]]]),

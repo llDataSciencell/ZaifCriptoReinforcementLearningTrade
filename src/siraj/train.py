@@ -2,15 +2,13 @@ from agent.agent import Agent
 from functions import *
 import sys
 
-print("aaaa")
-
 window_size, episode_count = int(10), int(1000)
-print(stock_name)
+
 print(window_size)
 print(episode_count)
 
 agent = Agent(window_size)
-data = read_bitflyer_json()  # getStockDataVec(stock_name)
+data = read_bitflyer_json()
 
 length_data = len(data) - 1
 batch_size = window_size

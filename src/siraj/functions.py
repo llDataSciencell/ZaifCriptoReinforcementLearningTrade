@@ -10,17 +10,6 @@ def formatPrice(n):
     return ("-$" if n < 0 else "$") + "{0:.2f}".format(abs(n))
 
 
-# returns the vector containing stock data from a fixed file
-def getStockDataVec(key):
-    vec = []
-    lines = open("data/" + key + ".csv", "r").read().splitlines()
-
-    for line in lines[1:]:
-        vec.append(float(line.split(",")[4]))
-    print(vec)
-    return vec
-
-
 def read_bitflyer_json():
     import csv
     history_data = []

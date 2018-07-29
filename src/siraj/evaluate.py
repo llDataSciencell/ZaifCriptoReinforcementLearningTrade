@@ -23,7 +23,7 @@ state = getStateFromCsvData(data, 0, window_size)
 total_profit = 0
 agent.inventory = []
 
-for t in range(10000,l):
+for t in range(14400,l):
 	action = agent.act(state)
 
 	# sit
