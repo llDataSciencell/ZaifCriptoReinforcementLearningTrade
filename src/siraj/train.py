@@ -2,10 +2,10 @@ from agent.agent import Agent
 from functions import *
 import sys
 
-window_size, episode_count = int(10), int(1000)
+window_size, episode_count = int(20), int(1000)
 
-print(window_size)
-print(episode_count)
+print("window_size:"+str(window_size))
+print("episode_count:"+str(episode_count))
 
 agent = Agent(window_size)
 data = read_bitflyer_json()

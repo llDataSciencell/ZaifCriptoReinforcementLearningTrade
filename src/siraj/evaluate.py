@@ -11,7 +11,7 @@ if len(sys.argv) != 2:
 
 model_name = sys.argv[1]
 model = load_model("models/" + model_name)
-window_size = int(10)
+window_size = int(20)
 print(model.layers[0].input.shape.as_list())
 
 agent = Agent(window_size, True, model_name)
