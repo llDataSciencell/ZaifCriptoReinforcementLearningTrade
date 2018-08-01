@@ -1,7 +1,7 @@
 from agent.agent import Agent
 from functions import *
 import sys
-
+from keras.models import load_model
 window_size, episode_count = int(20), int(1000)
 
 print("window_size:"+str(window_size))
@@ -12,6 +12,17 @@ data = read_bitflyer_json()
 
 length_data = len(data) - 1
 batch_size = 50
+
+try:
+    model_name = sys.argv[1]
+    model = load_model("models/" + model_name)
+    agent = Agent(window_size, True, model_name)
+    print("Model Loaded!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("=====================================================================")
+except:
+    import traceback
+    traceback.print_exc()
+
 
 for e in range(episode_count + 1):
     print("Episode " + str(e) + "/" + str(episode_count))
