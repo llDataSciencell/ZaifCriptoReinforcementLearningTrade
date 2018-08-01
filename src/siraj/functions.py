@@ -111,9 +111,11 @@ def getStateFromCsvData(data,idx,window_size):
     t=idx+1
     #tはidxに+1したもの。添字の都合。
     #print("getStateFromCsvData"+str(calc_high(data,idx,window_size+1,300)))
+    price60_sec_high = getStateLiveMode(calc_high(data, idx, window_size + 1, 60))
     price300_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,300))
     price3600_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,3600))
     price86400_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,86400))
+    price60_sec_low = getStateLiveMode(calc_low(data, idx, window_size + 1, 60))
     price300_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,300))
     price3600_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,3600))
     price86400_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,86400))
@@ -122,7 +124,7 @@ def getStateFromCsvData(data,idx,window_size):
     #print("data[] 3600/60    "+str(data[t - window_size * int(3600 / 60) - 1:t:int(3600 / 60)]))
     #print("data[idx]"+str(data[t-1]))
     #print("data[idx]" + str(data[t-50:t]))
-    return [np.array(price300_sec_high),np.array(price3600_sec_high),np.array(price86400_sec_high),np.array(price300_sec_low), np.array(price3600_sec_low), np.array(price86400_sec_low)]
+    return [np.array(price60_sec_high),np.array(price300_sec_high),np.array(price3600_sec_high),np.array(price86400_sec_high),np.array(price60_sec_low),np.array(price300_sec_low), np.array(price3600_sec_low), np.array(price86400_sec_low)]
 
 def make_input_data(window_size):
     # ローソク足の時間を指定

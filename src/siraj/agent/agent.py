@@ -51,12 +51,14 @@ class Agent:
         x5 = keras.layers.Dense(30, activation='relu')(input5)
         input6 = keras.layers.Input(shape=(None,self.state_size), name="in6")
         x6 = keras.layers.Dense(30, activation='relu')(input6)
-        input7 = keras.layers.Input(shape=(None, self.state_size), name="buy_sell")
-        x7 = keras.layers.Dense(10, activation='relu')(input7)
-        added = keras.layers.Add()([x1, x2, x3, x4, x5, x6])  # equivalent to added = keras.layers.add([x1, x2])
+        input7 = keras.layers.Input(shape=(None,self.state_size), name="in7")
+        x7 = keras.layers.Dense(30, activation='relu')(input7)
+        input8 = keras.layers.Input(shape=(None,self.state_size), name="in8")
+        x8 = keras.layers.Dense(30, activation='relu')(input8)
+        added = keras.layers.Add()([x1, x2, x3, x4, x5, x6,x7,x8])  # equivalent to added = keras.layers.add([x1, x2])
         dense_added = keras.layers.Dense(150)(added)
         out = keras.layers.Dense(self.action_size, activation="linear", name="output_Q")(dense_added)
-        model = keras.models.Model(inputs=[input1, input2, input3, input4, input5, input6], outputs=[out])
+        model = keras.models.Model(inputs=[input1, input2, input3, input4, input5, input6, input7, input8], outputs=[out])
 
         model.compile(loss={'output_Q': 'mean_absolute_error'},
                       loss_weights={'output_Q': 1},
@@ -73,7 +75,9 @@ class Agent:
                                            "in4": np.array([[state[3]]]),
                                            "in5": np.array([[state[4]]]),
                                            "in6": np.array([[state[5]]]),
-                                       "buy_sell": np.array([[buy_sell_array]])}))
+                                           "in7": np.array([[state[6]]]),
+                                           "in8": np.array([[state[7]]]),
+                                           "buy_sell": np.array([[buy_sell_array]])}))
 
         return np.argmax(options[0])
 
@@ -102,6 +106,8 @@ class Agent:
                                                                            "in4": np.array([[state[3]]]),
                                                                            "in5": np.array([[state[4]]]),
                                                                            "in6": np.array([[state[5]]]),
+                                                                           "in7": np.array([[state[6]]]),
+                                                                           "in8": np.array([[state[7]]]),
                                                                            "buy_sell": np.array([[buy_sell_array]])
                                                                            }))
 
@@ -111,6 +117,8 @@ class Agent:
                                            "in4": np.array([[state[3]]]),
                                            "in5": np.array([[state[4]]]),
                                            "in6": np.array([[state[5]]]),
+                                           "in7": np.array([[state[6]]]),
+                                           "in8": np.array([[state[7]]]),
                                            "buy_sell": np.array([[buy_sell_array]])})
             #print(target_f)
             target_f[0][0][action] = target
@@ -121,6 +129,8 @@ class Agent:
                             "in4": np.array([[state[3]]]),
                             "in5": np.array([[state[4]]]),
                             "in6": np.array([[state[5]]]),
+                            "in7": np.array([[state[6]]]),
+                            "in8": np.array([[state[7]]]),
                             "buy_sell": np.array([[buy_sell_array]])}, target_f, epochs=1, verbose=0)
 
         if self.epsilon > self.epsilon_min:
