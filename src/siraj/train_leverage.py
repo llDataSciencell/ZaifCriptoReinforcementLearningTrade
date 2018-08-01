@@ -39,7 +39,7 @@ for e in range(episode_count + 1):
             reward = max(data[idx] - bought_price, 0)
             total_profit += data[idx] - bought_price
             print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(data[idx] - bought_price))
-        elif action == 2 and len(agent.sell_inventory) > 0:
+        elif action == 2:
             agent.sell_inventory.append(data[idx])
             print("Sell(空売り): " + formatPrice(data[idx]))
 
