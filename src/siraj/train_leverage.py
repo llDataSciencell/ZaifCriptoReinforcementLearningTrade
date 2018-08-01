@@ -52,7 +52,8 @@ for e in range(episode_count + 1):
         next_state = getStateFromCsvData(data, idx+1, window_size)
         reward = 0
 
-        if action == 1 and len(agent.sell_inventory) > 0 and len(agent.buy_inventory) < 50:  # sell
+        if action == 1 and len(agent.sell_inventory) > 0:  # sell
+            for i in range(0,int(len(agent.sell_inventory)/10)):
                 sold_price = agent.sell_inventory.pop(0)
                 profit=sold_price - data[idx]
                 reward = profit#max(profit, 0)
@@ -61,12 +62,13 @@ for e in range(episode_count + 1):
         elif action == 1 and len(agent.buy_inventory) < 50:  # buy
                 agent.buy_inventory.append(data[idx])
                 print("Buy: " + formatPrice(data[idx]))
-        elif action == 2 and len(agent.buy_inventory) > 0 and len(agent.sell_inventory) < 50:  # sell
-                bought_price = agent.buy_inventory.pop(0)
-                profit = data[idx] - bought_price
-                reward = profit  # max(profit, 0)
-                total_profit += profit
-                print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
+        elif action == 2 and len(agent.buy_inventory) > 0:  # sell
+                for i in range(0,int(len(agent.buy_inventory)/10)):
+                    bought_price = agent.buy_inventory.pop(0)
+                    profit = data[idx] - bought_price
+                    reward = profit  # max(profit, 0)
+                    total_profit += profit
+                    print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
         elif action == 2 and len(agent.sell_inventory) < 50:
                 agent.sell_inventory.append(data[idx])
                 print("Sell(空売り): " + formatPrice(data[idx]))
