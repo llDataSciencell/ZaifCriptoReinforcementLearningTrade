@@ -26,10 +26,8 @@ for e in range(episode_count + 1):
         #TODO idx + 1出なくて良いか？　バグの可能性あり。
         next_state = getStateFromCsvData(data, idx+1, window_size)
         reward = 0
-        if action == 1:  # buy
-            agent.buy_inventory.append(data[idx])
-            print("Buy: " + formatPrice(data[idx]))
-        elif action == 1 and len(agent.sell_inventory) > 0:  # sell
+
+        if action == 1 and len(agent.sell_inventory) > 0:  # sell
             sold_price = agent.sell_inventory.pop(0)
             reward = max(sold_price - data[idx], 0)
             total_profit += sold_price - data[idx]
@@ -42,6 +40,9 @@ for e in range(episode_count + 1):
         elif action == 2:
             agent.sell_inventory.append(data[idx])
             print("Sell(空売り): " + formatPrice(data[idx]))
+        elif action == 1:  # buy
+            agent.buy_inventory.append(data[idx])
+            print("Buy: " + formatPrice(data[idx]))
 
 
         done = True if idx == length_data - 1 else False
