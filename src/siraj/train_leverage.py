@@ -68,7 +68,7 @@ for e in range(episode_count + 1):
         agent.memory.append((state, action, reward, next_state, done, buy_sell_array))
         state = next_state
 
-        if idx % 100:
+        if idx % 100 == 0:
             print("--------------------------------")
             print("Total Profit: " + formatPrice(total_profit))
             print("--------------------------------")
