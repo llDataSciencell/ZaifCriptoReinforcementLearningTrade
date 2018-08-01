@@ -29,14 +29,16 @@ for e in range(episode_count + 1):
 
         if action == 1 and len(agent.sell_inventory) > 0:  # sell
             sold_price = agent.sell_inventory.pop(0)
-            reward = max(sold_price - data[idx], 0)
-            total_profit += sold_price - data[idx]
-            print("Buy(空売りの決済): " + formatPrice(data[idx]) + " | Profit: " + formatPrice(data[idx] - bought_price))
+            profit=sold_price - data[idx]
+            reward = max(profit, 0)
+            total_profit += profit
+            print("Buy(空売りの決済): " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
         elif action == 2 and len(agent.buy_inventory) > 0:  # sell
             bought_price = agent.buy_inventory.pop(0)
-            reward = max(data[idx] - bought_price, 0)
-            total_profit += data[idx] - bought_price
-            print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(data[idx] - bought_price))
+            profit=data[idx] - bought_price
+            reward = max(profit, 0)
+            total_profit += profit
+            print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
         elif action == 2:
             agent.sell_inventory.append(data[idx])
             print("Sell(空売り): " + formatPrice(data[idx]))
