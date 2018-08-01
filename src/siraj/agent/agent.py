@@ -106,7 +106,7 @@ class Agent:
                                            "in4": np.array([[state[3]]]),
                                            "in5": np.array([[state[4]]]),
                                            "in6": np.array([[state[5]]])})
-            print(target_f)
+            #print(target_f)
             target_f[0][0][action] = target
 
             self.model.fit({"in1":np.array([[state[0]]]),
