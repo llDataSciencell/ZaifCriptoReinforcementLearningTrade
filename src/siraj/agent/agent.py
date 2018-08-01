@@ -14,7 +14,9 @@ class Agent:
         self.state_size = state_size  # normalized previous days
         self.action_size = 3  # sit, buy, sell
         self.memory = deque(maxlen=1000)
-        self.inventory = []
+        self.buy_inventory = []
+        self.sell_inventory = []
+        self.inventory = []#train.pyで使用
         self.model_name = model_name
         self.is_eval = is_eval
 

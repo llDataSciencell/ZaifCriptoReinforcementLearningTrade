@@ -1,20 +1,8 @@
 from agent.agent import Agent
 from functions import *
-from keras.models import load_model
 import sys
 
 window_size, episode_count = int(20), int(1000)
-
-try:
-    model_name = sys.argv[1]
-    model = load_model("models/" + model_name)
-    agent = Agent(window_size, True, model_name)
-    print("Model Loaded!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("=====================================================================")
-except:
-    import traceback
-    traceback.print_exc()
-    exit()
 
 print("window_size:"+str(window_size))
 print("episode_count:"+str(episode_count))
@@ -30,7 +18,7 @@ for e in range(episode_count + 1):
     state = getStateFromCsvData(data, 0, window_size)
     print(state)
     total_profit = 0
-    agent.inventory = []
+    agent.buy_inventory = []
 
     for idx in range(length_data):
         action = agent.act(state)
@@ -39,14 +27,22 @@ for e in range(episode_count + 1):
         next_state = getStateFromCsvData(data, idx+1, window_size)
         reward = 0
         if action == 1:  # buy
-            agent.inventory.append(data[idx])
+            agent.buy_inventory.append(data[idx])
             print("Buy: " + formatPrice(data[idx]))
-
-        elif action == 2 and len(agent.inventory) > 0:  # sell
-            bought_price = agent.inventory.pop(0)
+        elif action == 1 and len(agent.buy_inventory) == 0:  # sell
+            sold_price = agent.sell_inventory.pop(0)
+            reward = max(sold_price - data[idx], 0)
+            total_profit += sold_price - data[idx]
+            print("Buy: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(data[idx] - bought_price))
+        elif action == 2 and len(agent.buy_inventory) > 0:  # sell
+            bought_price = agent.buy_inventory.pop(0)
             reward = max(data[idx] - bought_price, 0)
             total_profit += data[idx] - bought_price
             print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(data[idx] - bought_price))
+        elif action == 2 and len(agent.buy_inventory) == 0:
+            agent.sell_inventory.append(data[idx])
+            print("Sell: " + formatPrice(data[idx]))
+
 
         done = True if idx == length_data - 1 else False
 
