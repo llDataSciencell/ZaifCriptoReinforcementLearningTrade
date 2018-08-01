@@ -51,6 +51,8 @@ class Agent:
         x5 = keras.layers.Dense(30, activation='relu')(input5)
         input6 = keras.layers.Input(shape=(None,self.state_size), name="in6")
         x6 = keras.layers.Dense(30, activation='relu')(input6)
+        input7 = keras.layers.Input(shape=(None, self.state_size), name="buy_sell")
+        x7 = keras.layers.Dense(10, activation='relu')(input7)
         added = keras.layers.Add()([x1, x2, x3, x4, x5, x6])  # equivalent to added = keras.layers.add([x1, x2])
         dense_added = keras.layers.Dense(150)(added)
         out = keras.layers.Dense(self.action_size, activation="linear", name="output_Q")(dense_added)
@@ -61,7 +63,7 @@ class Agent:
                       optimizer=Adam(lr=0.001))
         return model
 
-    def act(self, state):
+    def act(self, state,buy_sell_array):
         if not self.is_eval and random.random() <= self.epsilon:
             return random.randrange(self.action_size)
 
@@ -70,7 +72,8 @@ class Agent:
                                            "in3": np.array([[state[2]]]),
                                            "in4": np.array([[state[3]]]),
                                            "in5": np.array([[state[4]]]),
-                                           "in6": np.array([[state[5]]])}))
+                                           "in6": np.array([[state[5]]]),
+                                       "buy_sell": np.array([[buy_sell_array]])}))
 
         return np.argmax(options[0])
 
@@ -80,7 +83,7 @@ class Agent:
         for i in range(l - batch_size + 1, l):
             mini_batch.append(self.memory[i])
 
-        for state, action, reward, next_state, done in mini_batch:
+        for state, action, reward, next_state, done, buy_sell_array in mini_batch:
             target = reward
             if not done:
                 #print(state)
@@ -98,14 +101,17 @@ class Agent:
                                                                            "in3": np.array([[state[2]]]),
                                                                            "in4": np.array([[state[3]]]),
                                                                            "in5": np.array([[state[4]]]),
-                                                                           "in6": np.array([[state[5]]])}))
+                                                                           "in6": np.array([[state[5]]]),
+                                                                           "buy_sell": np.array([[buy_sell_array]])
+                                                                           }))
 
             target_f = self.model.predict({"in1":np.array([[state[0]]]),
                                            "in2":np.array([[state[1]]]),
                                            "in3": np.array([[state[2]]]),
                                            "in4": np.array([[state[3]]]),
                                            "in5": np.array([[state[4]]]),
-                                           "in6": np.array([[state[5]]])})
+                                           "in6": np.array([[state[5]]]),
+                                           "buy_sell": np.array([[buy_sell_array]])})
             #print(target_f)
             target_f[0][0][action] = target
 
@@ -114,7 +120,8 @@ class Agent:
                             "in3": np.array([[state[2]]]),
                             "in4": np.array([[state[3]]]),
                             "in5": np.array([[state[4]]]),
-                            "in6": np.array([[state[5]]])}, target_f, epochs=1, verbose=0)
+                            "in6": np.array([[state[5]]]),
+                            "buy_sell": np.array([[buy_sell_array]])}, target_f, epochs=1, verbose=0)
 
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay

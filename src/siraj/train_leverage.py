@@ -11,7 +11,7 @@ agent = Agent(window_size)
 data = read_bitflyer_json()
 
 length_data = len(data) - 1
-batch_size = window_size
+batch_size = 50
 
 for e in range(episode_count + 1):
     print("Episode " + str(e) + "/" + str(episode_count))
@@ -21,7 +21,21 @@ for e in range(episode_count + 1):
     agent.buy_inventory = []
 
     for idx in range(length_data):
-        action = agent.act(state)
+        len_buy=len(agent.buy_inventory)
+        len_sell=len(agent.sell_inventory)
+        if len_buy > 40:
+            buy_flag = 1
+            sell_flag= 0
+        elif len_sell > 40:
+            buy_flag = 0
+            sell_flag= 1
+        else:
+            buy_flag=0
+            sell_flag=0
+
+        buy_sell_array=[len_buy,len_sell,buy_flag,sell_flag]
+
+        action = agent.act(state,buy_sell_array)
 
         #TODO idx + 1出なくて良いか？　バグの可能性あり。
         next_state = getStateFromCsvData(data, idx+1, window_size)
@@ -51,7 +65,7 @@ for e in range(episode_count + 1):
 
         done = True if idx == length_data - 1 else False
 
-        agent.memory.append((state, action, reward, next_state, done))
+        agent.memory.append((state, action, reward, next_state, done, buy_sell_array))
         state = next_state
 
         if idx % 100:
