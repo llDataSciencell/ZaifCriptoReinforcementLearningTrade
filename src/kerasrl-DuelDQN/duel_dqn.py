@@ -28,8 +28,6 @@ model.add(Dense(100))
 model.add(Activation('relu'))
 model.add(Dense(90))
 model.add(Activation('relu'))
-model.add(Dense(80))
-model.add(Activation('relu'))
 model.add(Dense(nb_actions, activation='linear'))
 print(model.summary())
 
