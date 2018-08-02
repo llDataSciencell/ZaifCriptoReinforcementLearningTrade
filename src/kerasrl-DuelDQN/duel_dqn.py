@@ -8,7 +8,7 @@ from keras.optimizers import Adam
 from rl.agents.dqn import DQNAgent
 from rl.policy import BoltzmannQPolicy
 from rl.memory import SequentialMemory
-
+from rl.policy import EpsGreedyQPolicy
 
 ENV_NAME = 'FxEnv-v0'
 
@@ -34,7 +34,7 @@ print(model.summary())
 # Finally, we configure and compile our agent. You can use every built-in Keras optimizer and
 # even the metrics!
 memory = SequentialMemory(limit=50000, window_length=1)
-policy = BoltzmannQPolicy()
+policy = EpsGreedyQPolicy(eps=0.1) #BoltzmannQPolicy()
 # enable the dueling network
 # you can specify the dueling_type to one of {'avg','max','naive'}
 dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=10,
