@@ -1,3 +1,5 @@
+#https://github.com/keras-rl/keras-rl/blob/3dcd547f8f274f04fe11e813f52ceaed8987c90a/tests/rl/agents/test_dqn.py
+
 import numpy as np
 import gym
 
@@ -9,6 +11,7 @@ from rl.agents.dqn import DQNAgent
 #from rl.policy import BoltzmannQPolicy
 from rl.memory import SequentialMemory
 from rl.policy import EpsGreedyQPolicy
+from rl.processors import MultiInputProcessor
 from keras import backend as K
 #K.set_image_dim_ordering('th')
 ENV_NAME = 'FxEnv-v0'
@@ -35,7 +38,14 @@ print(model.summary())
 '''
 
 def _model():
-    shp = np.array([0 for i in range(10)])
+    #input1 = Input(shape=(2, 3))
+    #input2 = Input(shape=(2, 4))
+    #x = Concatenate()([input1, input2])
+    #x = Flatten()(x)
+    #x = Dense(2)(x)
+    #model = Model(inputs=[input1, input2], outputs=x)
+
+
     state_size=20
     input_buy_sell = Input(shape=(1, 4), name="buy_sell")
     buy_sell = Dense(30, activation='relu')(input_buy_sell)
@@ -77,6 +87,8 @@ memory = SequentialMemory(limit=50000, window_length=1)
 policy = EpsGreedyQPolicy(eps=0.1) #BoltzmannQPolicy()
 # enable the dueling network
 # you can specify the dueling_type to one of {'avg','max','naive'}
+#processor = MultiInputProcessor(nb_inputs=9)
+
 dqn = DQNAgent(model=model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=10,
                enable_dueling_network=True, dueling_type='avg', target_model_update=1e-2, policy=policy)
 dqn.compile(Adam(lr=1e-3), metrics=['mae'])
@@ -84,7 +96,8 @@ dqn.compile(Adam(lr=1e-3), metrics=['mae'])
 # Okay, now it's time to learn something! We visualize the training here for show, but this
 # slows down training quite a lot. You can always safely abort the training prematurely using
 # Ctrl + C.
-
+# MultiInputTestEnv([(3,), (4,)])
+print(vars(dqn))
 dqn.fit(env, nb_steps=len_data*5, visualize=False, verbose=2)
 
 # After training is done, we save the final weights.
@@ -92,3 +105,4 @@ dqn.save_weights('duel_dqn_{}_weights.h5f'.format(ENV_NAME), overwrite=True)
 
 # Finally, evaluate our algorithm for 5 episodes.
 #dqn.test(env, nb_episodes=1, visualize=False)
+
