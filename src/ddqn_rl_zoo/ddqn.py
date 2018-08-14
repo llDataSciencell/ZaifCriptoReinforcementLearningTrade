@@ -142,7 +142,7 @@ class DoubleDQNAgent:
                                            "in7": np.array([update_input[:,6]]),
                                            "in8": np.array([update_input[:,7]]),
                                            "buy_sell": np.array([buy_sell_array])}))
-        print("target")
+
         target_next = self.model.predict(({"in1":np.array([update_target[:,0]]),
                                            "in2":np.array([update_target[:,1]]),
                                            "in3": np.array([update_target[:,2]]),
@@ -152,7 +152,7 @@ class DoubleDQNAgent:
                                            "in7": np.array([update_target[:,6]]),
                                            "in8": np.array([update_target[:,7]]),
                                            "buy_sell": np.array([buy_sell_array])}))
-        print("target_next")
+
         #self.model.predict(update_target)
         target_val = self.target_model.predict(({"in1":np.array([update_target[:,0]]),
                                            "in2":np.array([update_target[:,1]]),
@@ -163,7 +163,7 @@ class DoubleDQNAgent:
                                            "in7": np.array([update_target[:,6]]),
                                            "in8": np.array([update_target[:,7]]),
                                            "buy_sell": np.array([buy_sell_array])}))
-        print("target_val")
+
         for i in range(self.batch_size):
             # like Q Learning, get maximum Q value at s'
             # But from target model
@@ -174,8 +174,8 @@ class DoubleDQNAgent:
                 # selection of action is from model
                 # update is from target model
                 a = np.argmax(target_next[0][i])
-                print(i)#64
-                print("a:" + str(a))#a:0
+                #print(i)#64
+                #print("a:" + str(a))#a:0
                 target[0][i][action[i]] = reward[i] + self.discount_factor * (
                     target_val[0][i][a])
 
