@@ -240,7 +240,7 @@ if __name__ == "__main__":
                     reward += profit  # max(profit, 0)
                     total_profit += profit
                     print("Buy(決済): " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
-                reward = reward / (i + 1)
+                #reward = reward / (i + 1)
             elif action == 1 and len(agent.buy_inventory) < 50:
                 agent.buy_inventory.append(data[idx])
                 print("Buy: " + formatPrice(data[idx]))
@@ -252,7 +252,7 @@ if __name__ == "__main__":
                     reward += profit  # max(profit, 0)
                     total_profit += profit
                     print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
-                reward = reward / (i + 1)
+                #reward = reward / (i + 1)
             elif action == 2 and len(agent.sell_inventory) < 50:
                 agent.sell_inventory.append(data[idx])
                 print("Sell(空売り): " + formatPrice(data[idx]))
@@ -269,4 +269,4 @@ if __name__ == "__main__":
                 print("BUY SELL" + str(buy_sell))
                 print("--------------------------------")
             if idx % 100000 == 0:
-                agent.model.save_weights("./save_model/ddqn.h5")
+                agent.model.save_weights("./save_model/epoch"+str(e)+"_"+str(idx)+"ddqn.h5")
