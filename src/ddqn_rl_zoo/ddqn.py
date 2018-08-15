@@ -26,7 +26,7 @@ class DoubleDQNAgent:
         # get size of state and action
         self.state_size = state_size
         self.action_size = action_size
-
+        self.input_stream_size=7
         # these is hyper parameters for the Double DQN
         self.discount_factor = 0.99
         self.learning_rate = 0.001
@@ -66,13 +66,12 @@ class DoubleDQNAgent:
         x6 = Dense(30, activation='relu')(input6)
         input7 = Input(shape=(None, self.state_size), name="in7")
         x7 = Dense(30, activation='relu')(input7)
-        input8 = Input(shape=(None, self.state_size), name="in8")
-        x8 = Dense(30, activation='relu')(input8)
+
         added = Add()(
-            [x1, x2, x3, x4, x5, x6, x7, x8])  # equivalent to added = keras.layers.add([x1, x2])
+            [x1, x2, x3, x4, x5, x6, x7])  # equivalent to added = keras.layers.add([x1, x2])
         dense_added = Dense(150)(added)
         out = Dense(self.action_size, activation="linear", name="output_Q")(dense_added)
-        model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, input8],
+        model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7],
                                    outputs=[out])
 
         model.compile(loss={'output_Q': 'mean_absolute_error'},
@@ -96,7 +95,6 @@ class DoubleDQNAgent:
                                            "in5": np.array([[state[4]]]),
                                            "in6": np.array([[state[5]]]),
                                            "in7": np.array([[state[6]]]),
-                                           "in8": np.array([[state[7]]]),
                                            "buy_sell": np.array([[buy_sell]])}))
             return np.argmax(q_value[0])
 
@@ -113,8 +111,8 @@ class DoubleDQNAgent:
         batch_size = min(self.batch_size, len(self.memory))
         mini_batch = random.sample(self.memory, batch_size)
 
-        update_input = np.zeros((batch_size,8,self.state_size))
-        update_target = np.zeros((batch_size,8,self.state_size))
+        update_input = np.zeros((batch_size,self.input_stream_size,self.state_size))
+        update_target = np.zeros((batch_size,self.input_stream_size,self.state_size))
         update_input_buy_sell=np.zeros((batch_size,1,self.buy_sell_len))
         update_target_buy_sell=np.zeros((batch_size,1,self.buy_sell_len))
         action, reward, done = [], [], []
@@ -143,7 +141,6 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_input[:,4]]),
                                            "in6": np.array([update_input[:,5]]),
                                            "in7": np.array([update_input[:,6]]),
-                                           "in8": np.array([update_input[:,7]]),
                                            "buy_sell": np.array([update_input_buy_sell[:]])}))
 
         target_next = self.model.predict(({"in1":np.array([update_target[:,0]]),
@@ -153,7 +150,6 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:,4]]),
                                            "in6": np.array([update_target[:,5]]),
                                            "in7": np.array([update_target[:,6]]),
-                                           "in8": np.array([update_target[:,7]]),
                                            "buy_sell": np.array([update_target_buy_sell[:]])}))
 
         #self.model.predict(update_target)
@@ -164,7 +160,6 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:,4]]),
                                            "in6": np.array([update_target[:,5]]),
                                            "in7": np.array([update_target[:,6]]),
-                                           "in8": np.array([update_target[:,7]]),
                                            "buy_sell": np.array([update_target_buy_sell[:]])}))
 
         for i in range(self.batch_size):
@@ -192,7 +187,6 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:, 4]]),
                                            "in6": np.array([update_target[:, 5]]),
                                            "in7": np.array([update_target[:, 6]]),
-                                           "in8": np.array([update_target[:, 7]]),
                                            "buy_sell": np.array([update_target_buy_sell[:]])}, target, batch_size=self.batch_size,
                        epochs=1, verbose=0)
 
@@ -269,10 +263,11 @@ if __name__ == "__main__":
             agent.train_model()
             state = next_state
 
-        if idx % 10 == 0:
-            print("--------------------------------")
-            print("Total Profit: " + formatPrice(total_profit))
-            print("--------------------------------")
+            if idx % 100 == 0:
+                print("--------------------------------")
+                print("Total Profit: " + formatPrice(total_profit))
+                print("BUY SELL" + str(buy_sell))
+                print("--------------------------------")
         # save the model
         if e % 500 == 0:
             agent.model.save_weights("./save_model/cartpole_ddqn.h5")

@@ -102,6 +102,18 @@ def calc_high(data,idx,window_size,one_tick_sec_term):
     high_price.reverse()
     return high_price
 
+def calc_60(data,idx,window_size,one_tick_sec_term):
+    zeros=[]
+    if idx <= window_size:
+        zeros = [0 for i in range(0,window_size-idx-1)]
+    price=[]
+    for i in range(idx,idx-(window_size+1)*int(one_tick_sec_term/60),-1):
+        if len(price) >= window_size-len(zeros):
+            price.reverse()
+            return zeros+price
+        price.append(data[i])
+    price.reverse()
+    return zeros+price
 '''
 data
 [286380.0, 286488.0, 286520.0, 286600.0, 286619.0, 286878.0, 286856.0, 286538.0, 286489.0, 286300.0, 286440.0, 286139.0, 286139.0, 286133.0, 286133.0, 286092.0, 286345.0, 286445.0, 286402.0, 286446.0, 286170.0, 286100.0, 285992.0, 285990.0, 285720.0, 285400.0, 285500.0, 285600.0, 285562.0, 285797.0, 286060.0, 286214.0, 286499.0, 286640.0, 286671.0, 286670.0, 286540.0, 286800.0, 286651.0, 286900.0, 286940.0, 286955.0, 286600.0, 286600.0, 286773.0, 286773.0, 287023.0, 286860.0, 286836.0, 286400.0, 286381.0, 286494.0, 286668.0, 286919.0, 286778.0, 286899.0, 286791.0, 286690.0, 286650.0, 286650.0, 286691.0, 286620.0, 286701.0, 286700.0, 286721.0, 286730.0, 286982.0, 286884.0, 286788.0, 286500.0, 286404.0, 286040.0, 285630.0, 285500.0, 285695.0, 285798.0, 285868.0, 285619.0, 285590.0, 285250.0, 284778.0, 284750.0, 284395.0, 284350.0, 284383.0, 284440.0, 284465.0, 284573.0, 284293.0, 284160.0, 284040.0, 284200.0, 284101.0, 284199.0, 283691.0, 284000.0, 284035.0, 283811.0, 283850.0, 283660.0, 283753.0, 283273.0, 282208.0, 281715.0, 281500.0, 280736.0, 280514.0, 280736.0, 280607.0, 280433.0, 281002.0, 280687.0, 281091.0, 281234.0, 281297.0, 281716.0, 281382.0, 282028.0, 282166.0, 282028.0, 281564.0, 281564.0, 281100.0, 280670.0, 280670.0, 280602.0, 280505.0, 280305.0, 279453.0, 278400.0, 277943.0, 277500.0, 277139.0, 276750.0, 276500.0, 277054.0, 277775.0, 277900.0, 278184.0, 278134.0, 278601.0, 278276.0, 278000.0, 277460.0, 277097.0, 277777.0, 278207.0, 278607.0, 279082.0, 280109.0, 280050.0, 279807.0, 279703.0, 280000.0, 279700.0, 280419.0, 280100.0, 280203.0, 280320.0, 279720.0, 279270.0, 279108.0, 278327.0, 279490.0, 280200.0, 279614.0, 279390.0, 279500.0, 279499.0, 279454.0, 279822.0, 280000.0, 279660.0, 279601.0, 279100.0, 278670.0, 278051.0, 278050.0, 278436.0, 278693.0, 277945.0, 277450.0, 277010.0, 277000.0, 276858.0, 277220.0, 277513.0, 277514.0, 277621.0, 278135.0, 278344.0, 277690.0, 277827.0, 278137.0, 278000.0, 277329.0, 277015.0, 276858.0, 276810.0, 276500.0, 276612.0, 276000.0, 275853.0, 276612.0, 276000.0, 276155.0, 276874.0, 277900.0, 277237.0, 277377.0, 277840.0, 278932.0, 279148.0, 278573.0, 278486.0, 278471.0, 278091.0, 277462.0, 277999.0, 278500.0, 278501.0, 278501.0, 278332.0, 279248.0, 279363.0, 278870.0, 278853.0, 278614.0, 278965.0, 279468.0, 280700.0, 281322.0, 280656.0, 280346.0, 279890.0, 280400.0, 280215.0, 280020.0, 279740.0, 279646.0, 279985.0, 280160.0, 280470.0, 280774.0, 280963.0, 280667.0, 280881.0, 280700.0, 281100.0, 281172.0, 281169.0, 281170.0, 281502.0, 281901.0, 282269.0, 282428.0]
@@ -111,11 +123,10 @@ def getStateFromCsvData(data,idx,window_size):
     t=idx+1
     #tはidxに+1したもの。添字の都合。
     #print("getStateFromCsvData"+str(calc_high(data,idx,window_size+1,300)))
-    price60_sec_high = getStateLiveMode(calc_high(data, idx, window_size + 1, 60))
+    price60_sec_high = getStateLiveMode(calc_60(data, idx, window_size + 1, 60))
     price300_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,300))
     price3600_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,3600))
     price86400_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,86400))
-    price60_sec_low = getStateLiveMode(calc_low(data, idx, window_size + 1, 60))
     price300_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,300))
     price3600_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,3600))
     price86400_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,86400))
@@ -124,7 +135,7 @@ def getStateFromCsvData(data,idx,window_size):
     #print("data[] 3600/60    "+str(data[t - window_size * int(3600 / 60) - 1:t:int(3600 / 60)]))
     #print("data[idx]"+str(data[t-1]))
     #print("data[idx]" + str(data[t-50:t]))
-    return [np.array(price60_sec_high),np.array(price300_sec_high),np.array(price3600_sec_high),np.array(price86400_sec_high),np.array(price60_sec_low),np.array(price300_sec_low), np.array(price3600_sec_low), np.array(price86400_sec_low)]
+    return [np.array(price60_sec_high),np.array(price300_sec_high),np.array(price3600_sec_high),np.array(price86400_sec_high),np.array(price300_sec_low), np.array(price3600_sec_low), np.array(price86400_sec_low)]
 
 def make_input_data(window_size):
     # ローソク足の時間を指定
@@ -152,8 +163,7 @@ def make_input_data(window_size):
            getStateLiveMode(price3600_sec_low),getStateLiveMode(price86400_sec_low)
     '''
 import unittest
-from functions import *
-window_size = 50
+window_size = 20
 data=read_bitflyer_json()
 
 class TestStringMethods(unittest.TestCase):
@@ -161,11 +171,11 @@ class TestStringMethods(unittest.TestCase):
 
     #Liveはwindow_sizeぴったり
     def test_make_input1(self):
-        self.assertEqual(len(make_input_data(window_size)[0]), 50)
+        self.assertEqual(len(make_input_data(window_size)[0]), window_size)
 
     def test_getStateCsv(self):
         idx=1000
-        self.assertEqual(len(getStateFromCsvData(data, idx, window_size)[0]),50)
+        self.assertEqual(len(getStateFromCsvData(data, idx, window_size)[0]),window_size)
 
     def test_calc_high_low1(self):
         self.assertEqual(len(calc_low(data,1000,window_size,300)),window_size)
@@ -233,34 +243,34 @@ class TestStringMethods(unittest.TestCase):
     def test_calc_high8(self):
         self.assertEqual(len(calc_high(data,1007,window_size,300)),window_size)
 
-    def test_calc_high1(self):
+    def test_calc_high2_1(self):
         self.assertEqual(len(calc_high(data, 1008, window_size, 300)), window_size)
 
-    def test_calc_high2(self):
+    def test_calc_high2_2(self):
         self.assertEqual(len(calc_high(data, 1009, window_size, 300)), window_size)
 
-    def test_calc_high3(self):
+    def test_calc_high2_3(self):
         self.assertEqual(len(calc_high(data, 1010, window_size, 300)), window_size)
 
-    def test_calc_high4(self):
+    def test_calc_high2_4(self):
         self.assertEqual(len(calc_high(data, 1011, window_size, 300)), window_size)
 
-    def test_calc_high5(self):
+    def test_calc_high2_5(self):
         self.assertEqual(len(calc_high(data, 1012, window_size, 300)), window_size)
 
-    def test_calc_high6(self):
+    def test_calc_high2_6(self):
         self.assertEqual(len(calc_high(data, 1013, window_size, 300)), window_size)
 
-    def test_calc_high7(self):
+    def test_calc_high2_7(self):
         self.assertEqual(len(calc_high(data, 1014, window_size, 300)), window_size)
 
-    def test_calc_high8(self):
+    def test_calc_high2_8(self):
         self.assertEqual(len(calc_high(data, 1015, window_size, 300)), window_size)
 
 
-    def test_calc_high8(self):
+    def test_calc_high2_9(self):
         self.assertEqual(len(calc_high(data, 0, window_size, 300)), window_size)
-    def test_calc_high8(self):
+    def test_calc_high2_10(self):
         self.assertEqual(len(calc_high(data, 1, window_size, 300)), window_size)
 
     def test_high_price(self):
@@ -269,9 +279,18 @@ class TestStringMethods(unittest.TestCase):
     def test_getState(self):
         self.assertEqual(len(getStateLiveMode(calc_high(data, 1000, window_size+1, 300))),window_size)
 
-    def test_getState(self):
+    def test_getState2(self):
         self.assertEqual(len(getStateLiveMode(calc_high(data, 1, window_size+1, 300))),window_size)
-
+    def test_calc_60(self):
+        #print(data[30:51])
+        #rint(calc_60(data, 50, window_size+1, 60))
+        self.assertEqual(len(calc_60(data, 50, window_size+1, 60)),len(data[30:51]))
+    def test_calc_60_2(self):
+        self.assertEqual(calc_60(data, 50, window_size+1, 60),data[50-(window_size):51])
+    def test_calc_60_3(self):
+        #print(data[0:10])
+        #print(calc_60(data,10,window_size+1,60))
+        self.assertEqual(calc_60(data, 10, window_size+1, 60)[10:20],data[0:10])
     '''
     def test_make_input2(self):
         self.assertEqual(len(make_input_data(window_size)[1]), 50)
