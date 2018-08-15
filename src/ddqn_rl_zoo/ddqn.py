@@ -263,11 +263,10 @@ if __name__ == "__main__":
             agent.train_model()
             state = next_state
 
-            if idx % 100 == 0:
+            if idx % 20 == 0:
                 print("--------------------------------")
                 print("Total Profit: " + formatPrice(total_profit))
                 print("BUY SELL" + str(buy_sell))
                 print("--------------------------------")
-        # save the model
-        if e % 500 == 0:
-            agent.model.save_weights("./save_model/cartpole_ddqn.h5")
+            if idx % 100000 == 0:
+                agent.model.save_weights("./save_model/ddqn.h5")
