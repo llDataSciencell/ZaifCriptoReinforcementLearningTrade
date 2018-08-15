@@ -127,7 +127,6 @@ class DoubleDQNAgent:
             #print(mini_batch[i])
             #print(update_input)
             #print(update_input[0])
-            print(mini_batch[i][0])
             update_input[i] = mini_batch[i][0]
             action.append(mini_batch[i][1])
             reward.append(mini_batch[i][2])
