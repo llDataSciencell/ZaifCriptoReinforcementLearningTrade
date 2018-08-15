@@ -256,7 +256,7 @@ if __name__ == "__main__":
             elif action == 2 and len(agent.sell_inventory) < 50:
                 agent.sell_inventory.append(data[idx])
                 print("Sell(空売り): " + formatPrice(data[idx]))
-
+            reward = reward / 1000
             # save the sample <s, a, r, s'> to the replay memory
             agent.append_sample(state, action, reward, next_state, done,buy_sell,next_buy_sell)
             # every time step do the training
