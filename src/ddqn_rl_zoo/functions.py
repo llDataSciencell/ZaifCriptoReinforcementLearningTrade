@@ -10,6 +10,20 @@ def formatPrice(n):
     return ("-$" if n < 0 else "$") + "{0:.2f}".format(abs(n))
 
 
+
+def make_inventory_array(buy_inventory,sell_inventory,max_inventory):
+    #常にinventoryが長さ50の配列になるように
+    if len(buy_inventory) > 0:
+        buy_inv = buy_inventory+[0 for i in range(50-len(buy_inventory))]
+        sell_inv = [0 for i in range(0,50)]
+    elif len(sell_inventory) > 0:
+        buy_inv = sell_inventory+[0 for i in range(50-len(sell_inventory))]
+        sell_inv = [0 for i in range(0,50)]
+    else:
+        buy_inv=[0 for i in range(50)]
+        sell_inv=[0 for i in range(50)]
+    return buy_inv,sell_inv
+
 def read_bitflyer_json():
     import csv
     history_data = []
