@@ -214,7 +214,7 @@ if __name__ == "__main__":
         agent.buy_inventory = []
         agent.sell_inventory = []
         for idx in range(length_data):
-            state = getStateFromCsvData(data, 0, window_size)
+            state = getStateFromCsvData(data, idx, window_size)
 
             # get action for the current state and go one step in environment
             # action =
