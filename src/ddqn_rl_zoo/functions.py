@@ -68,7 +68,7 @@ def getState(data, idx, window_size):
         res.append(sigmoid(int(block[i + 1] - block[i]) * 0.01))
 
     return np.array([res])
-def getStateLiveMode(price_array):
+def getStateBySigmoid(price_array):
     #入力->出力で１つ配列が短くなる。
     res=[]
     for i in range(0,len(price_array)-1):
@@ -139,13 +139,13 @@ def getStateFromCsvData(data,idx,window_size):
     t=idx+1
     #tはidxに+1したもの。添字の都合。
     #print("getStateFromCsvData"+str(calc_high(data,idx,window_size+1,300)))
-    price60_sec_high = getStateLiveMode(calc_60(data, idx, window_size + 1, 60))
-    price300_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,300))
-    price3600_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,3600))
-    price86400_sec_high=getStateLiveMode(calc_high(data,idx,window_size+1,86400))
-    price300_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,300))
-    price3600_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,3600))
-    price86400_sec_low=getStateLiveMode(calc_low(data,idx,window_size+1,86400))
+    price60_sec_high = getStateBySigmoid(calc_60(data, idx, window_size + 1, 60))
+    price300_sec_high=getStateBySigmoid(calc_high(data,idx,window_size+1,300))
+    price3600_sec_high=getStateBySigmoid(calc_high(data,idx,window_size+1,3600))
+    price86400_sec_high=getStateBySigmoid(calc_high(data,idx,window_size+1,86400))
+    price300_sec_low=getStateBySigmoid(calc_low(data,idx,window_size+1,300))
+    price3600_sec_low=getStateBySigmoid(calc_low(data,idx,window_size+1,3600))
+    price86400_sec_low=getStateBySigmoid(calc_low(data,idx,window_size+1,86400))
     #print("price300:　　"+str(price300_sec_high))
     #print("data[] 300/60　　　"+str(data[int(t-window_size*300/60)-1:int(t):int(300/60)]))
     #print("data[] 3600/60    "+str(data[t - window_size * int(3600 / 60) - 1:t:int(3600 / 60)]))
@@ -172,11 +172,11 @@ def make_input_data(window_size):
 
     #print(price300_sec_high)
     #必ずreturnでは複数の配列を返すこと。でないとtestcaseでエラーが出る。
-    return getStateLiveMode(price300_sec_high),getStateLiveMode(price300_sec_low)#\
+    return getStateBySigmoid(price300_sec_high),getStateBySigmoid(price300_sec_low)#\
     '''
-        ,getStateLiveMode(price3600_sec_high),\
-           getStateLiveMode(price86400_sec_low),\
-           getStateLiveMode(price3600_sec_low),getStateLiveMode(price86400_sec_low)
+        ,getStateBySigmoid(price3600_sec_high),\
+           getStateBySigmoid(price86400_sec_low),\
+           getStateBySigmoid(price3600_sec_low),getStateBySigmoid(price86400_sec_low)
     '''
 import unittest
 window_size = 20
@@ -293,10 +293,10 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(calc_high([0 if idx % 3 == 0 else 100 for idx in range(0,3000)],1007,window_size,300)[10],100)
 
     def test_getState(self):
-        self.assertEqual(len(getStateLiveMode(calc_high(data, 1000, window_size+1, 300))),window_size)
+        self.assertEqual(len(getStateBySigmoid(calc_high(data, 1000, window_size+1, 300))),window_size)
 
     def test_getState2(self):
-        self.assertEqual(len(getStateLiveMode(calc_high(data, 1, window_size+1, 300))),window_size)
+        self.assertEqual(len(getStateBySigmoid(calc_high(data, 1, window_size+1, 300))),window_size)
     def test_calc_60(self):
         #print(data[30:51])
         #rint(calc_60(data, 50, window_size+1, 60))

@@ -230,7 +230,6 @@ if __name__ == "__main__":
 
     for e in range(EPISODES):
         done = False
-        state = getStateFromCsvData(data, 0, window_size)
         total_profit = 0
         agent.buy_inventory = []
         agent.sell_inventory = []
