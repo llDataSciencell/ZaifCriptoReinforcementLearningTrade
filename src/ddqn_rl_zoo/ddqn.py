@@ -66,12 +66,13 @@ class DoubleDQNAgent:
         x6 = Dense(30, activation='relu')(input6)
         input7 = Input(shape=(None, self.state_size), name="in7")
         x7 = Dense(30, activation='relu')(input7)
-
+        buy_sell = Input(shape=(None,self.buy_sell_len), name="buy_sell")
+        x8 = Dense(30,activation='relu')(buy_sell)
         added = Add()(
-            [x1, x2, x3, x4, x5, x6, x7])  # equivalent to added = keras.layers.add([x1, x2])
+            [x1, x2, x3, x4, x5, x6, x7,x8])  # equivalent to added = keras.layers.add([x1, x2])
         dense_added = Dense(150)(added)
         out = Dense(self.action_size, activation="linear", name="output_Q")(dense_added)
-        model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7],
+        model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, buy_sell],
                                    outputs=[out])
 
         model.compile(loss={'output_Q': 'mean_absolute_error'},
@@ -141,7 +142,7 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_input[:,4]]),
                                            "in6": np.array([update_input[:,5]]),
                                            "in7": np.array([update_input[:,6]]),
-                                           "buy_sell": np.array([update_input_buy_sell[:]])}))
+                                           "buy_sell": np.array([update_input_buy_sell[0]])}))
 
         target_next = self.model.predict(({"in1":np.array([update_target[:,0]]),
                                            "in2":np.array([update_target[:,1]]),
@@ -150,7 +151,7 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:,4]]),
                                            "in6": np.array([update_target[:,5]]),
                                            "in7": np.array([update_target[:,6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[:]])}))
+                                           "buy_sell": np.array([update_target_buy_sell[0]])}))
 
         #self.model.predict(update_target)
         target_val = self.target_model.predict(({"in1":np.array([update_target[:,0]]),
@@ -160,7 +161,7 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:,4]]),
                                            "in6": np.array([update_target[:,5]]),
                                            "in7": np.array([update_target[:,6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[:]])}))
+                                           "buy_sell": np.array([update_target_buy_sell[0]])}))
 
         for i in range(self.batch_size):
             # like Q Learning, get maximum Q value at s'
@@ -187,7 +188,7 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:, 4]]),
                                            "in6": np.array([update_target[:, 5]]),
                                            "in7": np.array([update_target[:, 6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[:]])}, target, batch_size=self.batch_size,
+                                           "buy_sell": np.array([update_target_buy_sell[0]])}, target, batch_size=self.batch_size,
                        epochs=1, verbose=0)
 
 
@@ -229,7 +230,14 @@ if __name__ == "__main__":
             action = agent.get_action(state,buy_sell)
             # TODO idx + 1出なくて良いか？　バグの可能性あり。
             next_state = getStateFromCsvData(data, idx + 1, window_size)
-            next_buy_sell=[len_buy+1,len_sell-1] if action == 0 else [len_buy-1,len_sell+1]
+
+            if action == 0:
+                next_buy_sell=[len_buy+1,len_sell-1]
+            elif action==1:
+                next_buy_sell = [len_buy-1,len_sell+1]
+            else:
+                next_buy_sell = [len_buy,len_sell]
+
             reward = 0
 
             if action == 1 and len(agent.sell_inventory) > 0:
