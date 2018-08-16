@@ -244,7 +244,8 @@ if __name__ == "__main__":
             len_sell = len(agent.sell_inventory)
             buy_sell = [len_buy, len_sell]
 
-            current_buy_inv,current_sell_inv = make_inventory_array(agent.buy_inventory,agent.sell_inventory,max_inventory=max_inventory)
+            current_buy_inv,current_sell_inv = make_inventory_array(agent.buy_inventory,
+                                                agent.sell_inventory,max_inventory=max_inventory,current_price=data[idx])
             #state.append(buy_sell_array)
             #TODO buy_sell_array_nextを設定する。
             action = agent.get_action(state,buy_sell,current_buy_inv,current_sell_inv)

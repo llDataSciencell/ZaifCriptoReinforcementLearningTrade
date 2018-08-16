@@ -11,12 +11,14 @@ def formatPrice(n):
 
 
 
-def make_inventory_array(buy_inventory,sell_inventory,max_inventory):
+def make_inventory_array(buy_inventory,sell_inventory,max_inventory,current_price):
     #常にinventoryが長さ50の配列になるように
     if len(buy_inventory) > 0:
+        buy_inventory=[int(inv - current_price) for inv in buy_inventory]
         buy_inv = buy_inventory+[0 for i in range(50-len(buy_inventory))]
         sell_inv = [0 for i in range(0,50)]
     elif len(sell_inventory) > 0:
+        sell_inventory=[int(inv - current_price) for inv in sell_inventory]
         buy_inv = sell_inventory+[0 for i in range(50-len(sell_inventory))]
         sell_inv = [0 for i in range(0,50)]
     else:
