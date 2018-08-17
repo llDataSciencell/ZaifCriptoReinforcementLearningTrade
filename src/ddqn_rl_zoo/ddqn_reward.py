@@ -105,7 +105,7 @@ class DoubleDQNAgent:
                                            "buy_sell": np.array([[buy_sell]]),
                                            "buy_inventory":np.array([[buy_inventory]]),
                                            "sell_inventory":np.array([[sell_inventory]])}))
-            print(q_value)
+            
             return np.argmax(q_value[0])
 
     # save sample <s,a,r,s'> to the replay memory
@@ -245,7 +245,7 @@ if __name__ == "__main__":
 
             current_buy_inv,current_sell_inv = make_inventory_array(agent.buy_inventory,
                                                 agent.sell_inventory,max_inventory=max_inventory,current_price=data[idx])
-            
+
             #TODO buy_sell_array_nextを設定する。
             action = agent.get_action(state,buy_sell,current_buy_inv,current_sell_inv)
             # TODO idx + 1出なくて良いか？　バグの可能性あり。
