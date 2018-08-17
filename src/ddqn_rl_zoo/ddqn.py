@@ -251,13 +251,6 @@ if __name__ == "__main__":
             # TODO idx + 1出なくて良いか？　バグの可能性あり。
             next_state = getStateFromCsvData(data, idx + 1, window_size)
 
-            if action == 0:
-                next_buy_sell=[len_buy+1,len_sell-1]
-            elif action==1:
-                next_buy_sell = [len_buy-1,len_sell+1]
-            else:
-                next_buy_sell = [len_buy,len_sell]
-
             reward = 0
             if action == 1 and len(agent.sell_inventory) > 0:
                 i = 0
@@ -267,9 +260,11 @@ if __name__ == "__main__":
                     reward += profit  # max(profit, 0)
                     total_profit += profit
                     print("Buy(決済): " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
+                next_buy_sell = [len_buy,len_sell-i]
                 #reward = reward / (i + 1)
             elif action == 1 and len(agent.buy_inventory) < max_inventory:
                 agent.buy_inventory.append(data[idx])
+                next_buy_sell=[len_buy+1,len_sell]
                 print("Buy: " + formatPrice(data[idx]))
             elif action == 2 and len(agent.buy_inventory) > 0:
                 i = 0
@@ -279,12 +274,16 @@ if __name__ == "__main__":
                     reward += profit  # max(profit, 0)
                     total_profit += profit
                     print("Sell: " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
-                #reward = reward / (i + 1)
+                next_buy_sell = [len_buy-i,len_sell]
             elif action == 2 and len(agent.sell_inventory) < max_inventory:
                 agent.sell_inventory.append(data[idx])
+                next_buy_sell=[len_buy,len_sell+1]
                 print("Sell(空売り): " + formatPrice(data[idx]))
-            reward = reward / 1000
+            else:
+                next_buy_sell=[len_buy,len_sell]
 
+            reward = reward / 1000
+            print("act:"+str(aciton)+"|| buy_sell:"+str(buy_sell)+" || next_buy_sell"+str(next_buy_sell))
             #next_buy_inv,next_sell_inv = make_inventory_array(agent.buy_inventory,agent.sell_inventory,max_inventory=max_inventory)
             # save the sample <s, a, r, s'> to the replay memory
             agent.append_sample(state, action, reward, next_state, done,buy_sell,next_buy_sell,current_buy_inv,current_sell_inv)

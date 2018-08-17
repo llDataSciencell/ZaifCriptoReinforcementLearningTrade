@@ -105,7 +105,7 @@ class DoubleDQNAgent:
                                            "buy_sell": np.array([[buy_sell]]),
                                            "buy_inventory":np.array([[buy_inventory]]),
                                            "sell_inventory":np.array([[sell_inventory]])}))
-            
+
             return np.argmax(q_value[0])
 
     # save sample <s,a,r,s'> to the replay memory
@@ -260,13 +260,11 @@ if __name__ == "__main__":
 
             reward = 0
             if action == 1 and len(agent.sell_inventory) > 0:
-                i = 0
-                for i in range(0, int(len(agent.sell_inventory) / 10)):
-                    sold_price = agent.sell_inventory.pop(0)
-                    profit = sold_price - data[idx]
-                    reward += profit  # max(profit, 0)
-                    total_profit += profit
-                    print("Buy(決済): " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
+                sold_price = agent.sell_inventory.pop(0)
+                profit = sold_price - data[idx]
+                reward += profit  # max(profit, 0)
+                total_profit += profit
+                print("Buy(決済): " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
                 #reward = reward / (i + 1)
             elif action == 2 and len(agent.sell_inventory) < max_inventory:
                 agent.sell_inventory.append(data[idx])
