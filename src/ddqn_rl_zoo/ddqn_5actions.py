@@ -287,7 +287,7 @@ if __name__ == "__main__":
             agent.train_model()
             state = next_state
 
-            if idx % 20 == 0:
+            if idx % 10 == 0:
                 print("--------------------------------")
                 print("Total Profit: " + formatPrice(total_profit))
                 print("BUY SELL" + str(buy_sell))
