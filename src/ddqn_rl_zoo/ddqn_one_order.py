@@ -224,7 +224,7 @@ if __name__ == "__main__":
     length_data = len(data) - 1
     action_size = 3
     input_len=20
-    max_inventory=50
+    max_inventory=1
     agent = DoubleDQNAgent(input_len, action_size,max_inventory)
     scores, episodes = [], []
 
