@@ -283,7 +283,7 @@ if __name__ == "__main__":
                 next_buy_sell=[len_buy,len_sell]
 
             reward = reward / 1000
-            print("act:"+str(aciton)+"|| buy_sell:"+str(buy_sell)+" || next_buy_sell"+str(next_buy_sell))
+            print("act:"+str(action)+"|| buy_sell:"+str(buy_sell)+" || next_buy_sell"+str(next_buy_sell))
             #next_buy_inv,next_sell_inv = make_inventory_array(agent.buy_inventory,agent.sell_inventory,max_inventory=max_inventory)
             # save the sample <s, a, r, s'> to the replay memory
             agent.append_sample(state, action, reward, next_state, done,buy_sell,next_buy_sell,current_buy_inv,current_sell_inv)
