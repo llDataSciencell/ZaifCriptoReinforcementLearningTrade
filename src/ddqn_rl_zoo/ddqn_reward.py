@@ -19,7 +19,7 @@ EPISODES = 300
 # it uses Neural Network to approximate q function
 # and replay memory & target q network
 class DoubleDQNAgent:
-    def __init__(self, state_size, action_size):
+    def __init__(self, state_size, action_size,max_inventory):
         # if you want to see Cartpole learning, then change to True
         self.render = False
         self.load_model = False
@@ -36,6 +36,7 @@ class DoubleDQNAgent:
         self.batch_size = 64
         self.train_start = 1000
         self.buy_sell_len=2
+        self.max_inventory=max_inventory
         # create replay memory using deque
         self.memory = deque(maxlen=2000)
 
@@ -66,12 +67,18 @@ class DoubleDQNAgent:
         x6 = Dense(30, activation='relu')(input6)
         input7 = Input(shape=(None, self.state_size), name="in7")
         x7 = Dense(30, activation='relu')(input7)
+        buy_sell = Input(shape=(None,self.buy_sell_len), name="buy_sell")
+        x8 = Dense(30,activation='relu')(buy_sell)
+        buy_inventory = Input(shape=(None,self.max_inventory), name="buy_inventory")
+        x9 = Dense(30,activation='relu')(buy_inventory)
+        sell_inventory = Input(shape=(None,self.max_inventory), name="sell_inventory")
+        x10 = Dense(30,activation='relu')(sell_inventory)
 
         added = Add()(
-            [x1, x2, x3, x4, x5, x6, x7])  # equivalent to added = keras.layers.add([x1, x2])
+            [x1, x2, x3, x4, x5, x6, x7,x8,x9,x10])  # equivalent to added = keras.layers.add([x1, x2])
         dense_added = Dense(150)(added)
         out = Dense(self.action_size, activation="linear", name="output_Q")(dense_added)
-        model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7],
+        model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, buy_sell,buy_inventory,sell_inventory],
                                    outputs=[out])
 
         model.compile(loss={'output_Q': 'mean_absolute_error'},
@@ -84,7 +91,7 @@ class DoubleDQNAgent:
         self.target_model.set_weights(self.model.get_weights())
 
     # get action from model using epsilon-greedy policy
-    def get_action(self, state,buy_sell):
+    def get_action(self, state,buy_sell,buy_inventory,sell_inventory):
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.action_size)
         else:
@@ -95,12 +102,15 @@ class DoubleDQNAgent:
                                            "in5": np.array([[state[4]]]),
                                            "in6": np.array([[state[5]]]),
                                            "in7": np.array([[state[6]]]),
-                                           "buy_sell": np.array([[buy_sell]])}))
+                                           "buy_sell": np.array([[buy_sell]]),
+                                           "buy_inventory":np.array([[buy_inventory]]),
+                                           "sell_inventory":np.array([[sell_inventory]])}))
+            print(q_value)
             return np.argmax(q_value[0])
 
     # save sample <s,a,r,s'> to the replay memory
-    def append_sample(self, state, action, reward, next_state, done,buy_sell,next_buy_sell):
-        self.memory.append((state, action, reward, next_state, done,buy_sell,next_buy_sell))
+    def append_sample(self, state, action, reward, next_state, done,buy_sell,next_buy_sell,current_buy_inv,current_sell_inv):
+        self.memory.append((state, action, reward, next_state, done,buy_sell,next_buy_sell,current_buy_inv,current_sell_inv))
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
@@ -115,16 +125,12 @@ class DoubleDQNAgent:
         update_target = np.zeros((batch_size,self.input_stream_size,self.state_size))
         update_input_buy_sell=np.zeros((batch_size,1,self.buy_sell_len))
         update_target_buy_sell=np.zeros((batch_size,1,self.buy_sell_len))
+        update_input_buy_inventory=np.zeros((batch_size,1,self.max_inventory))
+        update_input_sell_inventory=np.zeros((batch_size,1,self.max_inventory))
+
         action, reward, done = [], [], []
 
         for i in range(batch_size):
-            #print(i)
-            #print(update_input.shape)#(64, 20)
-            #print(np.array(mini_batch).shape)#(64, 5)
-            #print(mini_batch[i][0])
-            #print(mini_batch[i])
-            #print(update_input)
-            #print(update_input[0])
             update_input[i] = mini_batch[i][0]
             action.append(mini_batch[i][1])
             reward.append(mini_batch[i][2])
@@ -132,6 +138,9 @@ class DoubleDQNAgent:
             done.append(mini_batch[i][4])
             update_input_buy_sell[i]=mini_batch[i][5]
             update_target_buy_sell[i]=mini_batch[i][6]
+            update_input_buy_inventory[i]=mini_batch[i][7]
+            update_input_sell_inventory[i]=mini_batch[i][8]
+
         #TODO buy_sell_arrayを修正する
         # buy_sell_array = np.array([[0,0,0,0] for j in range(batch_size)])
         target = self.model.predict(({"in1":np.array([update_input[:,0]]),
@@ -141,7 +150,10 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_input[:,4]]),
                                            "in6": np.array([update_input[:,5]]),
                                            "in7": np.array([update_input[:,6]]),
-                                           "buy_sell": np.array([update_input_buy_sell[:]])}))
+                                           "buy_sell": np.array([update_input_buy_sell[0]]),
+                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
+                                           "sell_inventory": np.array([update_input_sell_inventory[0]]),
+                                           }))
 
         target_next = self.model.predict(({"in1":np.array([update_target[:,0]]),
                                            "in2":np.array([update_target[:,1]]),
@@ -150,7 +162,10 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:,4]]),
                                            "in6": np.array([update_target[:,5]]),
                                            "in7": np.array([update_target[:,6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[:]])}))
+                                           "buy_sell": np.array([update_target_buy_sell[0]]),
+                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
+                                           "sell_inventory": np.array([update_input_sell_inventory[0]])
+                                           }))
 
         #self.model.predict(update_target)
         target_val = self.target_model.predict(({"in1":np.array([update_target[:,0]]),
@@ -160,7 +175,10 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:,4]]),
                                            "in6": np.array([update_target[:,5]]),
                                            "in7": np.array([update_target[:,6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[:]])}))
+                                           "buy_sell": np.array([update_target_buy_sell[0]]),
+                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
+                                           "sell_inventory": np.array([update_input_sell_inventory[0]])
+                                           }))
 
         for i in range(self.batch_size):
             # like Q Learning, get maximum Q value at s'
@@ -187,7 +205,10 @@ class DoubleDQNAgent:
                                            "in5": np.array([update_target[:, 4]]),
                                            "in6": np.array([update_target[:, 5]]),
                                            "in7": np.array([update_target[:, 6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[:]])}, target, batch_size=self.batch_size,
+                                           "buy_sell": np.array([update_target_buy_sell[0]]),
+                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
+                                           "sell_inventory": np.array([update_input_sell_inventory[0]])
+                                                                                  }, target, batch_size=self.batch_size,
                        epochs=1, verbose=0)
 
 
@@ -203,13 +224,12 @@ if __name__ == "__main__":
     length_data = len(data) - 1
     action_size = 3
     input_len=20
-    agent = DoubleDQNAgent(input_len, action_size)
-
+    max_inventory=50
+    agent = DoubleDQNAgent(input_len, action_size,max_inventory)
     scores, episodes = [], []
 
     for e in range(EPISODES):
         done = False
-        state = getStateFromCsvData(data, 0, window_size)
         total_profit = 0
         agent.buy_inventory = []
         agent.sell_inventory = []
@@ -221,57 +241,48 @@ if __name__ == "__main__":
             # next_state, reward, done, info = env.step(action)
             len_buy = len(agent.buy_inventory)
             len_sell = len(agent.sell_inventory)
-
-
             buy_sell = [len_buy, len_sell]
-            #state.append(buy_sell_array)
+
+            current_buy_inv,current_sell_inv = make_inventory_array(agent.buy_inventory,
+                                                agent.sell_inventory,max_inventory=max_inventory,current_price=data[idx])
+            
             #TODO buy_sell_array_nextを設定する。
-            action = agent.get_action(state,buy_sell)
+            action = agent.get_action(state,buy_sell,current_buy_inv,current_sell_inv)
             # TODO idx + 1出なくて良いか？　バグの可能性あり。
             next_state = getStateFromCsvData(data, idx + 1, window_size)
 
-            if action == 1:
+            if action == 0:
                 next_buy_sell=[len_buy+1,len_sell-1]
-            elif action==2:
+            elif action==1:
                 next_buy_sell = [len_buy-1,len_sell+1]
             else:
                 next_buy_sell = [len_buy,len_sell]
 
             reward = 0
-
             if action == 1 and len(agent.sell_inventory) > 0:
                 i = 0
                 for i in range(0, int(len(agent.sell_inventory) / 10)):
                     sold_price = agent.sell_inventory.pop(0)
                     profit = sold_price - data[idx]
                     reward += profit  # max(profit, 0)
-                    print("Buy(決済)  | Profit: " + str(profit))
+                    total_profit += profit
+                    print("Buy(決済): " + formatPrice(data[idx]) + " | Profit: " + formatPrice(profit))
                 #reward = reward / (i + 1)
-            elif action == 1 and len(agent.buy_inventory) < 50:
-                agent.buy_inventory.append(data[idx])
-                print("Buy: " + str(data[idx]))
-            elif action == 2 and len(agent.buy_inventory) > 0:
-                i = 0
-                for i in range(0, int(len(agent.buy_inventory) / 10)):
-                    bought_price = agent.buy_inventory.pop(0)
-                    profit = data[idx] - bought_price
-                    reward += profit  # max(profit, 0)
-                    print("Sell:  | Profit: " + str(profit))
-                #reward = reward / (i + 1)
-            elif action == 2 and len(agent.sell_inventory) < 50:
+            elif action == 2 and len(agent.sell_inventory) < max_inventory:
                 agent.sell_inventory.append(data[idx])
-                print("Sell(空売り): " + str(data[idx]))
-            total_profit += reward
+                print("Sell(空売り): " + formatPrice(data[idx]))
             reward = reward / 1000
+
+            #next_buy_inv,next_sell_inv = make_inventory_array(agent.buy_inventory,agent.sell_inventory,max_inventory=max_inventory)
             # save the sample <s, a, r, s'> to the replay memory
-            agent.append_sample(state, action, reward, next_state, done,buy_sell,next_buy_sell)
+            agent.append_sample(state, action, reward, next_state, done,buy_sell,next_buy_sell,current_buy_inv,current_sell_inv)
             # every time step do the training
             agent.train_model()
             state = next_state
 
             if idx % 20 == 0:
                 print("--------------------------------")
-                print("Total Profit: " + str(total_profit))
+                print("Total Profit: " + formatPrice(total_profit))
                 print("BUY SELL" + str(buy_sell))
                 print("--------------------------------")
             if idx % 100000 == 0:
