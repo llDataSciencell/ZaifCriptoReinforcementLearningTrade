@@ -17,8 +17,9 @@ def make_inventory_array(buy_inventory,sell_inventory,max_inventory,current_pric
         # current_price - inv
         buy_inventory=[int(current_price - inv) for inv in buy_inventory]
         buy_inv = buy_inventory+[0 for i in range(50-len(buy_inventory))]
+        # inv - current_price
         sell_inventory=[int(inv - current_price) for inv in sell_inventory]
-        buy_inv = sell_inventory+[0 for i in range(50-len(sell_inventory))]
+        sell_inv = sell_inventory+[0 for i in range(50-len(sell_inventory))]
     elif len(buy_inventory) > 0:
         buy_inventory=[int(current_price - inv) for inv in buy_inventory]
         buy_inv = buy_inventory+[0 for i in range(50-len(buy_inventory))]
