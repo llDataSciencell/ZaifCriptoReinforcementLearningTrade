@@ -12,7 +12,7 @@ from keras.layers import Input
 from keras.layers import Add
 from keras.models import Model
 from functions import *
-from keras.utils import plot_model
+#from keras.utils import plot_model
 EPISODES = 300
 
 # Double DQN Agent for the Cartpole
@@ -85,7 +85,7 @@ class DoubleDQNAgent:
                       loss_weights={'output_Q': 1},
                       optimizer=Adam(lr=0.001))
 
-        plot_model(model, to_file='model.png')
+        #plot_model(model, to_file='model.png')
         return model
 
     # after some time interval update the target model to be same with model
