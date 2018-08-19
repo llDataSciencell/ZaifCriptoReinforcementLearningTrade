@@ -22,7 +22,7 @@ class DoubleDQNAgent:
     def __init__(self, state_size, action_size,max_inventory):
         # if you want to see Cartpole learning, then change to True
         self.render = False
-        self.load_model = False
+        self.load_model = True
         # get size of state and action
         self.state_size = state_size
         self.action_size = action_size
@@ -48,7 +48,7 @@ class DoubleDQNAgent:
         self.update_target_model()
 
         if self.load_model:
-            self.model.load_weights("./save_model/cartpole_ddqn.h5")
+            self.model.load_weights("./save_model/epoch8_300000ddqn.h5")
 
     # approximate Q function using Neural Network
     # state is input and Q Value of each action is output of network
