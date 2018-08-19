@@ -77,11 +77,11 @@ class DoubleDQNAgent:
         added = Add()(
             [x1, x2, x3, x4, x5, x6, x7,x8,x9,x10])  # equivalent to added = keras.layers.add([x1, x2])
         dense_added = Dense(400)(added)
-        out = Dense(self.action_size, activation="linear", name="output_Q")(dense_added)
+        out = Dense(self.action_size, activation="sigmoid", name="output_Q")(dense_added)
         model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, buy_sell,buy_inventory,sell_inventory],
                                    outputs=[out])
 
-        model.compile(loss={'output_Q': 'mean_absolute_error'},
+        model.compile(loss={'output_Q': 'mean_squared_error'},
                       loss_weights={'output_Q': 1},
                       optimizer=Adam(lr=0.001))
 
