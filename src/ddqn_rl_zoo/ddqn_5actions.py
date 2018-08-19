@@ -12,7 +12,7 @@ from keras.layers import Input
 from keras.layers import Add
 from keras.models import Model
 from functions import *
-
+from keras.utils import plot_model
 EPISODES = 300
 
 # Double DQN Agent for the Cartpole
@@ -22,18 +22,18 @@ class DoubleDQNAgent:
     def __init__(self, state_size, action_size,max_inventory):
         # if you want to see Cartpole learning, then change to True
         self.render = False
-        self.load_model = True
+        self.load_model = False #True
         # get size of state and action
         self.state_size = state_size
         self.action_size = action_size
         self.input_stream_size=7
         # these is hyper parameters for the Double DQN
-        self.discount_factor = 0.99
-        self.learning_rate = 0.001
-        self.epsilon = 1.0
+        self.discount_factor = 0.97
+        self.learning_rate = 0.0005
+        self.epsilon = 0.3
         self.epsilon_decay = 0.99999
-        self.epsilon_min = 0.1
-        self.batch_size = 64
+        self.epsilon_min = 0.05
+        self.batch_size = 128
         self.train_start = 1000
         self.buy_sell_len=2
         self.max_inventory=max_inventory
@@ -76,7 +76,7 @@ class DoubleDQNAgent:
 
         added = Add()(
             [x1, x2, x3, x4, x5, x6, x7,x8,x9,x10])  # equivalent to added = keras.layers.add([x1, x2])
-        dense_added = Dense(150)(added)
+        dense_added = Dense(400)(added)
         out = Dense(self.action_size, activation="linear", name="output_Q")(dense_added)
         model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, buy_sell,buy_inventory,sell_inventory],
                                    outputs=[out])
@@ -84,6 +84,8 @@ class DoubleDQNAgent:
         model.compile(loss={'output_Q': 'mean_absolute_error'},
                       loss_weights={'output_Q': 1},
                       optimizer=Adam(lr=0.001))
+
+        plot_model(model, to_file='model.png')
         return model
 
     # after some time interval update the target model to be same with model
@@ -214,7 +216,7 @@ class DoubleDQNAgent:
 
 if __name__ == "__main__":
 
-    window_size, episode_count = int(20), int(1000)
+    window_size, episode_count = int(30), int(1000)
 
     print("window_size:" + str(window_size))
     print("episode_count:" + str(episode_count))
@@ -223,9 +225,8 @@ if __name__ == "__main__":
 
     length_data = len(data) - 1
     action_size = 5
-    input_len=20
     max_inventory=50
-    agent = DoubleDQNAgent(input_len, action_size,max_inventory)
+    agent = DoubleDQNAgent(window_size, action_size,max_inventory)
     scores, episodes = [], []
 
     for e in range(EPISODES):
