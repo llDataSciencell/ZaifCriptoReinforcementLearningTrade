@@ -3,7 +3,7 @@ import math
 import os
 import requests
 import json, sys
-
+import matplotlib.pyplot as plt
 
 # prints formatted price
 def formatPrice(n):
@@ -185,6 +185,32 @@ def make_input_data(window_size):
            getStateBySigmoid(price86400_sec_low),\
            getStateBySigmoid(price3600_sec_low),getStateBySigmoid(price86400_sec_low)
     '''
+def update_trading_view(self, current_price, action):
+        self.price_history.append(current_price)
+        self.trade_history.append(action)
+
+
+def draw_trading_view(self):
+        data, date = np.array(self.price_history), np.array([idx for idx in range(0, len(self.price_history))])
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(date, data)#,marker='o'
+        ax.plot()
+
+        for num in range(0,len(self.price_history)):
+            if self.trade_history[num] == 0:
+                plt.scatter(date[num], data[num], marker="^", color="green")
+            elif self.trade_history[num] == 1:
+                plt.scatter(date[num],data[num], marker="v", color="red")
+
+        ax.set_title("Cripto Price")
+        ax.set_xlabel("Day")
+        ax.set_ylabel("Price[$]")
+        plt.grid(fig)
+        plt.show(fig)
+        self.price_history=[]
+        self.trade_history=[]
+
 import unittest
 window_size = 20
 data=read_bitflyer_json()

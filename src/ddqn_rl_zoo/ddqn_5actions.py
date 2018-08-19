@@ -279,7 +279,10 @@ if __name__ == "__main__":
             else:
                 next_buy_sell=[len_buy,len_sell]
 
-            reward = reward / 1000
+            if reward > 0:
+                sigmoid(reward * 0.001)
+            else:
+                sigmoid(reward * 0.0001)
             print("act:"+str(action)+"|| buy_sell:"+str(buy_sell)+" || next_buy_sell"+str(next_buy_sell))
             #next_buy_inv,next_sell_inv = make_inventory_array(agent.buy_inventory,agent.sell_inventory,max_inventory=max_inventory)
             # save the sample <s, a, r, s'> to the replay memory
