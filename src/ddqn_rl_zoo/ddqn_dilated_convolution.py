@@ -53,25 +53,25 @@ class DoubleDQNAgent:
     # approximate Q function using Neural Network
     # state is input and Q Value of each action is output of network
     def build_model(self):
-        input1 = Input(shape=(1, self.state_size), name="in1")
+        input1 = Input(batch_shape=(None,1, self.state_size), name="in1")
         x1 = Conv1D(10,10,strides=1,padding="causal")(input1)
-        input2 = Input(shape=(1, self.state_size), name="in2")
+        input2 = Input(batch_shape=(None,1, self.state_size), name="in2")
         x2 = Conv1D(10,10,strides=1,padding="causal")(input2)
-        input3 = Input(shape=(1, self.state_size), name="in3")
+        input3 = Input(batch_shape=(None,1, self.state_size), name="in3")
         x3 = Conv1D(10,10,strides=1,padding="causal")(input3)
-        input4 = Input(shape=(1, self.state_size), name="in4")
+        input4 = Input(batch_shape=(None,1, self.state_size), name="in4")
         x4 = Conv1D(10,10,strides=1,padding="causal")(input4)
-        input5 = Input(shape=(1, self.state_size), name="in5")
+        input5 = Input(batch_shape=(None,1, self.state_size), name="in5")
         x5 = Conv1D(10,10,strides=1,padding="causal")(input5)
-        input6 = Input(shape=(1, self.state_size), name="in6")
+        input6 = Input(batch_shape=(None,1, self.state_size), name="in6")
         x6 = Conv1D(10,10,strides=1,padding="causal")(input6)
-        input7 = Input(shape=(1, self.state_size), name="in7")
+        input7 = Input(batch_shape=(None,1, self.state_size), name="in7")
         x7 = Conv1D(10,10,strides=1,padding="causal")(input7)
-        buy_sell = Input(shape=(1, self.buy_sell_len), name="buy_sell")
+        buy_sell = Input(batch_shape=(None,1, self.buy_sell_len), name="buy_sell")
         x8 = Dense(30,activation='relu')(buy_sell)
-        buy_inventory = Input(shape=(1, self.max_inventory), name="buy_inventory")
+        buy_inventory = Input(batch_shape=(None,1, self.max_inventory), name="buy_inventory")
         x9 = Dense(30,activation='relu')(buy_inventory)
-        sell_inventory = Input(shape=(1,self.max_inventory), name="sell_inventory")
+        sell_inventory = Input(batch_shape=(None,1,self.max_inventory), name="sell_inventory")
         x10 = Dense(30,activation='relu')(sell_inventory)
 
         added = Add()(
@@ -147,43 +147,50 @@ class DoubleDQNAgent:
             update_input_buy_inventory[i]=mini_batch[i][7]
             update_input_sell_inventory[i]=mini_batch[i][8]
 
+        update_input=update_input.reshape((batch_size,self.input_stream_size,1,self.state_size))
+        update_target=update_target.reshape((batch_size,self.input_stream_size,1,self.state_size))
+        update_input_buy_sell.reshape((batch_size,1,self.buy_sell_len))
+        update_target_buy_sell.reshape((batch_size,1,self.buy_sell_len))
+        update_input_buy_inventory.reshape((batch_size,1,self.max_inventory))
+        update_input_sell_inventory.reshape((batch_size,1,self.max_inventory))
+
         #TODO buy_sell_arrayを修正する
-        # buy_sell_array = np.array([[0,0,0,0] for j in range(batch_size)])
-        target = self.model.predict(({"in1":np.array([update_input[:,0]]),
-                                           "in2":np.array([update_input[:,1]]),
-                                           "in3": np.array([update_input[:,2]]),
-                                           "in4": np.array([update_input[:,3]]),
-                                           "in5": np.array([update_input[:,4]]),
-                                           "in6": np.array([update_input[:,5]]),
-                                           "in7": np.array([update_input[:,6]]),
-                                           "buy_sell": np.array([update_input_buy_sell[0]]),
-                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
-                                           "sell_inventory": np.array([update_input_sell_inventory[0]]),
+        # (1,1,128,30)
+        target = self.model.predict(({"in1":np.array(update_input[:,0]),
+                                           "in2":np.array(update_input[:,1]),
+                                           "in3": np.array(update_input[:,2]),
+                                           "in4": np.array(update_input[:,3]),
+                                           "in5": np.array(update_input[:,4]),
+                                           "in6": np.array(update_input[:,5]),
+                                           "in7": np.array(update_input[:,6]),
+                                           "buy_sell": np.array(update_input_buy_sell),
+                                           "buy_inventory": np.array(update_input_buy_inventory),
+                                           "sell_inventory": np.array(update_input_sell_inventory),
                                            }))
 
-        target_next = self.model.predict(({"in1":np.array([update_target[:,0]]),
-                                           "in2":np.array([update_target[:,1]]),
-                                           "in3": np.array([update_target[:,2]]),
-                                           "in4": np.array([update_target[:,3]]),
-                                           "in5": np.array([update_target[:,4]]),
-                                           "in6": np.array([update_target[:,5]]),
-                                           "in7": np.array([update_target[:,6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[0]]),
-                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
-                                           "sell_inventory": np.array([update_input_sell_inventory[0]])
+        target_next = self.model.predict(({"in1":np.array(update_target[:,0]),
+                                           "in2":np.array(update_target[:,1]),
+                                           "in3": np.array(update_target[:,2]),
+                                           "in4": np.array(update_target[:,3]),
+                                           "in5": np.array(update_target[:,4]),
+                                           "in6": np.array(update_target[:,5]),
+                                           "in7": np.array(update_target[:,6]),
+                                           "buy_sell": np.array(update_target_buy_sell),
+                                           "buy_inventory": np.array(update_input_buy_inventory),
+                                           "sell_inventory": np.array(update_input_sell_inventory)
                                            }))
 
         #self.model.predict(update_target)
-        target_val = self.target_model.predict(({"in1":np.array([update_target[:,0]]),
-                                           "in2":np.array([update_target[:,1]]),
-                                           "in3": np.array([update_target[:,2]]),
-                                           "in4": np.array([update_target[:,3]]),
-                                           "in5": np.array([update_target[:,4]]),
-                                           "in6": np.array([update_target[:,5]]),
-                                           "in7": np.array([update_target[:,6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[0]]),
-                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
-                                           "sell_inventory": np.array([update_input_sell_inventory[0]])
+        target_val = self.target_model.predict(({"in1":np.array(update_target[:,0]),
+                                           "in2":np.array(update_target[:,1]),
+                                           "in3": np.array(update_target[:,2]),
+                                           "in4": np.array(update_target[:,3]),
+                                           "in5": np.array(update_target[:,4]),
+                                           "in6": np.array(update_target[:,5]),
+                                           "in7": np.array(update_target[:,6]),
+                                           "buy_sell": np.array(update_target_buy_sell),
+                                           "buy_inventory": np.array(update_input_buy_inventory),
+                                           "sell_inventory": np.array(update_input_sell_inventory)
                                            }))
 
         for i in range(self.batch_size):
