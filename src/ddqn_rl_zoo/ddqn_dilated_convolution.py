@@ -197,30 +197,30 @@ class DoubleDQNAgent:
             # like Q Learning, get maximum Q value at s'
             # But from target model
             if done[i]:
-                target[0][i][action[i]] = reward[i]
+                target[i][action[i]] = reward[i]
             else:
                 # the key point of Double DQN
                 # selection of action is from model
                 # update is from target model
-                a = np.argmax(target_next[0][i])
+                a = np.argmax(target_next[i])
                 #print(i)#64
                 #print("a:" + str(a))#a:0
-                target[0][i][action[i]] = reward[i] + self.discount_factor * (
-                    target_val[0][i][a])
+                target[i][action[i]] = reward[i] + self.discount_factor * (
+                    target_val[i][a])
 
         # make minibatch which includes target q value and predicted q value
         # and do the model fit!
         # update_input
-        self.model.fit({"in1": np.array([update_target[:, 0]]),
-                                           "in2": np.array([update_target[:, 1]]),
-                                           "in3": np.array([update_target[:, 2]]),
-                                           "in4": np.array([update_target[:, 3]]),
-                                           "in5": np.array([update_target[:, 4]]),
-                                           "in6": np.array([update_target[:, 5]]),
-                                           "in7": np.array([update_target[:, 6]]),
-                                           "buy_sell": np.array([update_target_buy_sell[0]]),
-                                           "buy_inventory": np.array([update_input_buy_inventory[0]]),
-                                           "sell_inventory": np.array([update_input_sell_inventory[0]])
+        self.model.fit({"in1": np.array(update_target[:, 0]),
+                                           "in2": np.array(update_target[:, 1]),
+                                           "in3": np.array(update_target[:, 2]),
+                                           "in4": np.array(update_target[:, 3]),
+                                           "in5": np.array(update_target[:, 4]),
+                                           "in6": np.array(update_target[:, 5]),
+                                           "in7": np.array(update_target[:, 6]),
+                                           "buy_sell": np.array(update_target_buy_sell),
+                                           "buy_inventory": np.array(update_input_buy_inventory),
+                                           "sell_inventory": np.array(update_input_sell_inventory)
                                                                                   }, target, batch_size=self.batch_size,
                        epochs=1, verbose=0)
 
