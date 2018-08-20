@@ -9,7 +9,7 @@ from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Input
-from keras.layers import Add
+from keras.layers import Add,Conv1D,Flatten,Concatenate
 from keras.models import Model
 from functions import *
 #from keras.utils import plot_model
@@ -53,30 +53,34 @@ class DoubleDQNAgent:
     # approximate Q function using Neural Network
     # state is input and Q Value of each action is output of network
     def build_model(self):
-        input1 = Input(shape=(None, self.state_size), name="in1")
-        x1 = Dense(30, activation='relu')(input1)
-        input2 = Input(shape=(None, self.state_size), name="in2")
-        x2 = Dense(30, activation='relu')(input2)
-        input3 = Input(shape=(None, self.state_size), name="in3")
-        x3 = Dense(30, activation='relu')(input3)
-        input4 = Input(shape=(None, self.state_size), name="in4")
-        x4 = Dense(30, activation='relu')(input4)
-        input5 = Input(shape=(None, self.state_size), name="in5")
-        x5 = Dense(30, activation='relu')(input5)
-        input6 = Input(shape=(None, self.state_size), name="in6")
-        x6 = Dense(30, activation='relu')(input6)
-        input7 = Input(shape=(None, self.state_size), name="in7")
-        x7 = Dense(30, activation='relu')(input7)
-        buy_sell = Input(shape=(None,self.buy_sell_len), name="buy_sell")
+        input1 = Input(shape=(self.batch_size, self.state_size,1), name="in1")
+        x1 = Conv1D(10,10,strides=1,padding="causal")(input1)
+        input2 = Input(shape=(self.batch_size, self.state_size,1), name="in2")
+        x2 = Conv1D(10,10,strides=1,padding="causal")(input2)
+        input3 = Input(shape=(self.batch_size, self.state_size), name="in3")
+        x3 = Conv1D(10,10,strides=1,padding="causal")(input3)
+        input4 = Input(shape=(self.batch_size, self.state_size), name="in4")
+        x4 = Conv1D(10,10,strides=1,padding="causal")(input4)
+        input5 = Input(shape=(self.batch_size, self.state_size), name="in5")
+        x5 = Conv1D(10,10,strides=1,padding="causal")(input5)
+        input6 = Input(shape=(self.batch_size, self.state_size), name="in6")
+        x6 = Conv1D(10,10,strides=1,padding="causal")(input6)
+        input7 = Input(shape=(self.batch_size, self.state_size), name="in7")
+        x7 = Conv1D(10,10,strides=1,padding="causal")(input7)
+        buy_sell = Input(shape=(self.batch_size,self.buy_sell_len), name="buy_sell")
         x8 = Dense(30,activation='relu')(buy_sell)
-        buy_inventory = Input(shape=(None,self.max_inventory), name="buy_inventory")
+        buy_inventory = Input(shape=(self.batch_size,self.max_inventory), name="buy_inventory")
         x9 = Dense(30,activation='relu')(buy_inventory)
-        sell_inventory = Input(shape=(None,self.max_inventory), name="sell_inventory")
+        sell_inventory = Input(shape=(self.batch_size,self.max_inventory), name="sell_inventory")
         x10 = Dense(30,activation='relu')(sell_inventory)
 
         added = Add()(
-            [x1, x2, x3, x4, x5, x6, x7,x8,x9,x10])  # equivalent to added = keras.layers.add([x1, x2])
-        dense_added = Dense(400)(added)
+            [x1, x2, x3, x4, x5, x6, x7])  # equivalent to added = keras.layers.add([x1, x2])
+        added_dense = Add()([x8,x9,x10])
+        fl1=Flatten()(added)
+        fl2=Flatten()(added_dense)
+        fl_add=Concatenate(axis=1)([fl1,fl2])
+        dense_added = Dense(400)(fl_add)
         out = Dense(self.action_size, activation="sigmoid", name="output_Q")(dense_added)
         model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, buy_sell,buy_inventory,sell_inventory],
                                    outputs=[out])
