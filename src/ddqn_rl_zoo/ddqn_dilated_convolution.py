@@ -54,19 +54,19 @@ class DoubleDQNAgent:
     # state is input and Q Value of each action is output of network
     def build_model(self):
         input1 = Input(batch_shape=(None,1, self.state_size), name="in1")
-        x1 = Conv1D(10,10,strides=1,padding="causal")(input1)
+        x1 = Conv1D(10,10,strides=1,padding="causal",dilation_rate=4)(input1)
         input2 = Input(batch_shape=(None,1, self.state_size), name="in2")
-        x2 = Conv1D(10,10,strides=1,padding="causal")(input2)
+        x2 = Conv1D(10,10,strides=1,padding="causal",dilation_rate=4)(input2)
         input3 = Input(batch_shape=(None,1, self.state_size), name="in3")
-        x3 = Conv1D(10,10,strides=1,padding="causal")(input3)
+        x3 = Conv1D(10,10,strides=1,padding="causal",dilation_rate=4)(input3)
         input4 = Input(batch_shape=(None,1, self.state_size), name="in4")
-        x4 = Conv1D(10,10,strides=1,padding="causal")(input4)
+        x4 = Conv1D(10,10,strides=1,padding="causal",dilation_rate=4)(input4)
         input5 = Input(batch_shape=(None,1, self.state_size), name="in5")
-        x5 = Conv1D(10,10,strides=1,padding="causal")(input5)
+        x5 = Conv1D(10,10,strides=1,padding="causal",dilation_rate=4)(input5)
         input6 = Input(batch_shape=(None,1, self.state_size), name="in6")
-        x6 = Conv1D(10,10,strides=1,padding="causal")(input6)
+        x6 = Conv1D(10,10,strides=1,padding="causal",dilation_rate=4)(input6)
         input7 = Input(batch_shape=(None,1, self.state_size), name="in7")
-        x7 = Conv1D(10,10,strides=1,padding="causal")(input7)
+        x7 = Conv1D(10,10,strides=1,padding="causal",dilation_rate=4)(input7)
         buy_sell = Input(batch_shape=(None,1, self.buy_sell_len), name="buy_sell")
         x8 = Dense(30,activation='relu')(buy_sell)
         buy_inventory = Input(batch_shape=(None,1, self.max_inventory), name="buy_inventory")
@@ -245,7 +245,7 @@ if __name__ == "__main__":
         total_profit = 0
         agent.buy_inventory = []
         agent.sell_inventory = []
-        for idx in range(10000*5):#length_data):
+        for idx in range(length_data):
             state = getStateFromCsvData(data, idx, window_size)
 
             # get action for the current state and go one step in environment
@@ -309,6 +309,7 @@ if __name__ == "__main__":
                 print("BUY SELL" + str(buy_sell))
                 print("--------------------------------")
             if idx == 10000:
-                draw_trading_view()
+                #draw_trading_view()
+                pass
             if idx % 100000 == 0:
                 agent.model.save_weights("./save_model/epoch"+str(e)+"_"+str(idx)+"ddqn.h5")
